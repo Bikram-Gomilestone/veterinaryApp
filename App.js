@@ -1,14 +1,22 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { StyleSheet } from 'react-native'
+import React, {  } from 'react'
 import Dashboard from './screens/Dashboard'
 import Login from './screens/Login'
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import SplashScreen from './screens/SplashScreen'
+
 
 const App = () => {
+  const Stack = createNativeStackNavigator();
   return (
-    <View>
-      {/* <Dashboard /> */}
-      <Login/>
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="SplashScreen" component={SplashScreen} />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Dashboard" component={Dashboard} />
+      </Stack.Navigator>
+    </NavigationContainer>
   )
 }
 
