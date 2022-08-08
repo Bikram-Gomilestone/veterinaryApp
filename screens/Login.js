@@ -14,15 +14,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const Login = () => {
+const Login = (props) => {
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
   const handleSubmitButton = async () => {
     let payload = {
-      "username": username,
-      "password": password
+      username: username,
+      password: password
     }
     await axios.post('http://206.189.129.191/backend/api/v1/auth', payload)
       .then(function (response) {
@@ -30,6 +30,7 @@ const Login = () => {
           alert(response.data.meta.message)
         } else {
           AsyncStorage.setItem("login", 'true')
+          props.navigation.navigate("Dashboard")
         }
       })
       .catch(function (error) {

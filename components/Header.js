@@ -7,7 +7,7 @@ const Header = (props) => {
     <View style={styles.topContainer}>
     <Image source={require('../assets/mainlogo.png')} style={styles.icon} />
     {props.addBtn ?
-    <TouchableOpacity style={styles.addLeadBtn}>
+    <TouchableOpacity style={styles.addLeadBtn} onPress={props.onPress}>
       <Text style={styles.btnText}>
         <Icon name="plus" size={14} color="#2E4CFF" /> Add Lead
       </Text>

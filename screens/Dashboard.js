@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, StyleSheet, Text, View,TouchableOpacity } from 'react-native'
 import React from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DashboardCard from '../components/DashboardCard'
@@ -17,10 +17,10 @@ const chartConfig = {
 };
 
 
-const Dashboard = () => {
+const Dashboard = (props) => {
   return (
     <View>
-      <Header />
+      <Header addBtn={true} onPress={()=>{props.navigation.navigate('Form')}} />
       <View style={{ marginHorizontal: 20 }}>
         <Text style={styles.welcomeText}>Welcome Ajit</Text>
         <Text style={styles.lastUpdatedText}>Last updated: 5 Aug, 1:12PM</Text>
@@ -35,10 +35,10 @@ const Dashboard = () => {
       </View>
       <View style={{ marginHorizontal: 20, marginTop: 30 }}>
         <Text style={styles.recentlyAddedHeading}>Recent leads added</Text>
-        <View style={styles.recentlyAddedTextContainer}>
+        <TouchableOpacity style={styles.recentlyAddedTextContainer} onPress={()=>{props.navigation.navigate('AllLead')}}>
           <Text style={styles.recentlyAddedText}>Rahul</Text>
           <View style={styles.recentlyAddedIcon}><Icon name="angle-right" size={14} color="#B4B4B4" /></View>
-        </View>
+        </TouchableOpacity>
       </View>
       <View style={{ marginHorizontal: 20, marginTop: 35 }}>
         <Text style={{ color: '#707070', fontSize: 10, marginBottom: 15 }}>RECENT REPORT</Text>
