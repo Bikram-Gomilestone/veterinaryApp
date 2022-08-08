@@ -7,15 +7,39 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const Login = () => {
+
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+  const handleSubmitButton = async () => {
+    let payload = {
+      "username": username,
+      "password": password
+    }
+    await axios.post('http://206.189.129.191/backend/api/v1/auth', payload)
+      .then(function (response) {
+        if (response.data.meta.message === 'Invalid Login credentials') {
+          alert(response.data.meta.message)
+        } else {
+          AsyncStorage.setItem("login", 'true')
+        }
+      })
+      .catch(function (error) {
+        console.log("Error ===> ", error);
+      });
+  }
+
   return (
     <View style={styles.mainContainer}>
-      <View style={{height: windowHeight}}>
+      <View style={{ height: windowHeight }}>
         <View style={styles.loginUpSec}>
           <Image
             source={require('../assets/loginbg3.jpg')}
@@ -36,16 +60,22 @@ const Login = () => {
             <TextInput
               style={styles.usernameTextInputstyle}
               placeholder="Username"
+              value={username}
+              onChangeText={(e) => setUsername(e)}
             />
 
             <TextInput
               style={styles.passwordInputstyle}
               placeholder="Password"
+              value={password}
+              onChangeText={(e) => setPassword(e)}
             />
             <View
               style={styles.submitButtonContainer}>
               <TouchableOpacity
-                style={styles.submitButtonStyle}>
+                style={styles.submitButtonStyle}
+                onPress={handleSubmitButton}
+              >
                 <Text
                   style={styles.submitButtonTextStyle}>
                   Submit
@@ -62,10 +92,10 @@ const Login = () => {
 export default Login;
 
 const styles = StyleSheet.create({
-  mainContainer:{
+  mainContainer: {
     flex: 1,
     height: windowHeight
-},   
+  },
   loginUpSec: {
     flexDirection: 'row',
     flex: 1,
@@ -96,19 +126,19 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingRight: 20,
   },
-  loginText:{
+  loginText: {
     fontSize: 20,
     color: '#000',
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  loginTitle:{
+  loginTitle: {
     fontSize: 14,
     marginTop: 20,
-    marginHorizontal:5,
-    color:'#000000'
-},
-  usernameTextInputstyle:{
+    marginHorizontal: 5,
+    color: '#000000'
+  },
+  usernameTextInputstyle: {
     borderWidth: 1,
     borderColor: '#F4F4F4',
     height: 40,
@@ -119,7 +149,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     paddingLeft: 20,
   },
-  passwordInputstyle:{
+  passwordInputstyle: {
     borderWidth: 1,
     borderColor: '#F4F4F4',
     height: 40,
@@ -133,9 +163,9 @@ const styles = StyleSheet.create({
   submitButtonContainer: {
     alignItems: 'center',
     marginTop: 30,
-    marginBottom: 35 
+    marginBottom: 35
   },
-  submitButtonStyle:{
+  submitButtonStyle: {
     borderColor: '#2E4CFF',
     borderWidth: 1,
     backgroundColor: '#2E4CFF',
@@ -143,7 +173,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 6,
   },
-  submitButtonTextStyle:{
+  submitButtonTextStyle: {
     color: '#fff',
     textAlign: 'center',
     fontSize: 16
