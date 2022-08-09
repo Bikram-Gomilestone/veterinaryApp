@@ -6,6 +6,7 @@ const DropDown = props => {
   return (
     <View>
       <Dropdown
+        data={props.data}
         style={styles.container}
         placeholderStyle={{fontSize: 10}}
         placeholder={props.placeholder}

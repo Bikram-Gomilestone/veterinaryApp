@@ -1,5 +1,6 @@
 import {
   Image,
+  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
@@ -7,15 +8,46 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import CheckBox from '@react-native-community/checkbox';
 import DropDown from '../components/DropDown';
 import AllleadCard from '../components/AllleadCard';
 import Header from '../components/Header';
+import axios from 'axios';
 
-const data = [{
+const Data = [{
+  name:"Rahul Sagar",
+  phoneNumber:"9501736242",
+  companyName:"VET camp-Singhpura"
+},
+{
+  name:"Sid",
+  phoneNumber:"1234567890",
+  companyName:"VET camp-Singhpura"
+},
+{
+  name:"Bikram",
+  phoneNumber:"9501736242",
+  companyName:"VET camp-Singhpura"
+},
+{
+  name:"Manish",
+  phoneNumber:"9501736242",
+  companyName:"VET camp-Singhpura"
+},
+{
+  name:"Rahul Sagar",
+  phoneNumber:"9501736242",
+  companyName:"VET camp-Singhpura"
+},
+{
+  name:"Sid",
+  phoneNumber:"9501736242",
+  companyName:"VET camp-Singhpura"
+},
+{
   name:"Rahul Sagar",
   phoneNumber:"9501736242",
   companyName:"VET camp-Singhpura"
@@ -32,16 +64,84 @@ const data = [{
 },
 {
   name:"Manish",
+  phoneNumber:"9512346567",
+  companyName:"VET camp-Singhpura"
+},
+{
+  name:"Rahul Sagar",
   phoneNumber:"9501736242",
   companyName:"VET camp-Singhpura"
 },
 ]
 
-const AllLead = () => {
+
+const AllLead = (props) => {
+
+  const [data,setData] = useState([]);
+  const [name,setName] = useState(null);
+   
+  useEffect(() => {
+    getData();
+  
+  }, [])
+  
+  const getData = async() => {
+    let allData =[]
+    await axios
+    .get('http://206.189.129.191/backend/api/v1/getAllData')
+    .then(function (response) {
+      console.log(JSON.stringify(response.data.data.farmers),"ffadfadf")
+      let result = response.data.data.farmers;
+       
+      result.forEach(element => {
+        allData.push(element);
+      });
+      setData(allData);
+    })
+    .catch(function (error) {
+      console.log('Error ===> ', error);
+    });
+
+  }
+ 
+  const handleSearchItem = (item) => {
+ 
+    let originalData = Data;
+    if(item !== ''  ){
+      if(isNaN(item)){
+        let Data = data.filter(
+          (e) => {
+              if(e.name != null)
+              {
+                return e.name.toLowerCase().includes(item.toLowerCase());
+              }
+          },
+        );
+        setData(Data);
+      }else{
+        let Data = data.filter(
+          (e) => {
+              if(e.phoneNumber != null)
+              {
+                return e.phoneNumber.includes(item);
+              }
+          },
+        );
+        setData(Data);
+      }
+      
+    }else{
+      
+      setData(originalData)
+    }
+  
+        
+  }
+
   return (
     <View>
       <StatusBar hidden />
-      <Header addBtn = {true}/>
+      <Header addBtn = {true} onPress={()=>{props.navigation.navigate('Form')}}/>
       <View style={styles.middleContainer}>
         <Text style={styles.allLeadText}>
           All Leads
@@ -57,6 +157,11 @@ const AllLead = () => {
           <TextInput
             style={styles.searchTextInput}
             placeholder="Search"
+            value={name}
+            onChangeText={(value)=>{
+              setName(value);
+              handleSearchItem(value);
+            }}
           />
         </View>
       </View>
@@ -76,13 +181,18 @@ const AllLead = () => {
           <DropDown placeholder="Mark as" />
         </View>
       </View>
-      {data.map((item)=>{
+      {/* <View style={{marginBottom: 20}}> */}
+      <ScrollView showsVerticalScrollIndicator={false} style={{marginBottom: 55}}>
+      {data.map((item,index)=>{
+        {console.log(item)}
         return(
-          <View style={{marginBottom:15}}>
-      <AllleadCard name={item.name} phoneNumber={item.phoneNumber} companyName={item.companyName}/>
+        <View style={{marginBottom:15}}>
+         <AllleadCard key={index} name={item.farmer_name} phoneNumber={item.farmer_contact} companyName={item.camp_name}/>
       </View>
     )})}
+    </ScrollView>
     </View>
+    // </View>
   );
 };
 

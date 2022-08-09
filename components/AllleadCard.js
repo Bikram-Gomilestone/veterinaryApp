@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, ScrollView} from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -6,7 +6,7 @@ import CheckBox from '@react-native-community/checkbox';
 
 const AllleadCard = (props) => {
   return (
-    <View>
+    <ScrollView>
       <View View style={styles.topContainer}>
         <View style={{flexDirection:'row'}}>
 
@@ -55,11 +55,11 @@ const AllleadCard = (props) => {
            {props.companyName}
           </Text>
           <Text style={styles.viewDetail}>
-            View details
+            {'View details'}
           </Text>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
