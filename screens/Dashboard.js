@@ -1,9 +1,11 @@
 import { Dimensions, StyleSheet, Text, View,TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DashboardCard from '../components/DashboardCard'
 import Header from '../components/Header';
-import { LineChart } from 'react-native-chart-kit'
+import { LineChart } from 'react-native-chart-kit';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const chartConfig = {
   backgroundGradientFrom: "#1E2923",
@@ -18,11 +20,42 @@ const chartConfig = {
 
 
 const Dashboard = (props) => {
+  const [name,setName] = useState(null);
+  const [username,setUsername] = useState(null);
+
+  useEffect(() => {
+    getData();
+    AsyncStorage.getItem("username").then((e) => {
+        setUsername(e)
+    }).catch((e)=>{alert(e)})
+  }, [])
+
+  const getData = async() => {
+    
+    await axios
+    .get('http://206.189.129.191/backend/api/v1/getAllData')
+    .then(function (response) {
+      console.log(JSON.stringify(response.data.data.farmers),"ffadfadf")
+      let result = response.data.data.farmers[0].farmer_name;
+
+      setName(result);
+       
+      // result.forEach(element => {
+      //   console.log(element,"========")
+      //   // data.push(element);
+      // });
+      
+    })
+    .catch(function (error) {
+      console.log('Error ===> ', error);
+    });
+
+  }
   return (
     <View>
       <Header addBtn={true} onPress={()=>{props.navigation.navigate('Form')}} />
       <View style={{ marginHorizontal: 20 }}>
-        <Text style={styles.welcomeText}>Welcome Ajit</Text>
+        <Text style={styles.welcomeText}>{`Welcome ${username}`}</Text>
         <Text style={styles.lastUpdatedText}>Last updated: 5 Aug, 1:12PM</Text>
       </View>
       <View style={styles.dashboardCard}>
@@ -36,7 +69,7 @@ const Dashboard = (props) => {
       <View style={{ marginHorizontal: 20, marginTop: 30 }}>
         <Text style={styles.recentlyAddedHeading}>Recent leads added</Text>
         <TouchableOpacity style={styles.recentlyAddedTextContainer} onPress={()=>{props.navigation.navigate('AllLead')}}>
-          <Text style={styles.recentlyAddedText}>Rahul</Text>
+          <Text style={styles.recentlyAddedText}>{name}</Text>
           <View style={styles.recentlyAddedIcon}><Icon name="angle-right" size={14} color="#B4B4B4" /></View>
         </TouchableOpacity>
       </View>

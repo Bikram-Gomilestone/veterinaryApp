@@ -73,7 +73,7 @@ const Data = [{
   companyName:"VET camp-Singhpura"
 },
 ]
-
+let allData =[];
 
 const AllLead = (props) => {
 
@@ -86,7 +86,7 @@ const AllLead = (props) => {
   }, [])
   
   const getData = async() => {
-    let allData =[]
+    let data=[]
     await axios
     .get('http://206.189.129.191/backend/api/v1/getAllData')
     .then(function (response) {
@@ -94,9 +94,10 @@ const AllLead = (props) => {
       let result = response.data.data.farmers;
        
       result.forEach(element => {
-        allData.push(element);
+        data.push(element);
       });
-      setData(allData);
+      allData.push(data)
+      setData(data);
     })
     .catch(function (error) {
       console.log('Error ===> ', error);
@@ -105,15 +106,15 @@ const AllLead = (props) => {
   }
  
   const handleSearchItem = (item) => {
- 
-    let originalData = Data;
+    console.log(data,'data')
+    // let originalData = allData;
     if(item !== ''  ){
       if(isNaN(item)){
         let Data = data.filter(
           (e) => {
-              if(e.name != null)
+              if(e.farmer_name != null)
               {
-                return e.name.toLowerCase().includes(item.toLowerCase());
+                return e.farmer_name.toLowerCase().includes(item.toLowerCase());
               }
           },
         );
@@ -121,9 +122,9 @@ const AllLead = (props) => {
       }else{
         let Data = data.filter(
           (e) => {
-              if(e.phoneNumber != null)
+              if(e.farmer_contact != null)
               {
-                return e.phoneNumber.includes(item);
+                return e.farmer_contact.includes(item);
               }
           },
         );
@@ -131,8 +132,8 @@ const AllLead = (props) => {
       }
       
     }else{
+      setData(allData[0])
       
-      setData(originalData)
     }
   
         

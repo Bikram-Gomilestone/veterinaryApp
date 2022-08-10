@@ -30,6 +30,7 @@ const Login = (props) => {
           alert(response.data.meta.message)
         } else {
           AsyncStorage.setItem("login", 'true')
+          AsyncStorage.setItem('username',response.data.data.user[0].agentName);
           props.navigation.navigate("Dashboard")
         }
       })
