@@ -1,17 +1,18 @@
-import {StyleSheet, Text, View} from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
-import {Dropdown} from 'react-native-element-dropdown';
-import {Picker} from '@react-native-picker/picker';
+import { Dropdown } from 'react-native-element-dropdown';
+import { Picker } from '@react-native-picker/picker';
 
 const FormDropDown = props => {
   return (
     <View style={styles.dropDownContainer}>
       <Picker
+        key={Math.random()}
         style={styles.dropdownStyle}
         prompt={props.prompt}
         selectedValue={props.selectedValue}
         onValueChange={props.onValueChange}>
-          <Picker.Item label={props.label} />
+        <Picker.Item label={props.label} />
         {props.data.map(e => (
           <Picker.Item label={e} value={e} />
         ))}

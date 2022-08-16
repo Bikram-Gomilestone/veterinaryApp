@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  FlatList
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
@@ -16,184 +17,310 @@ import DropDown from '../components/DropDown';
 import AllleadCard from '../components/AllleadCard';
 import Header from '../components/Header';
 import axios from 'axios';
+import FormDropDown from '../components/FormDropDown';
+
 
 const Data = [{
-  name:"Rahul Sagar",
-  phoneNumber:"9501736242",
-  companyName:"VET camp-Singhpura"
+  name: "Rahul Sagar",
+  phoneNumber: "9501736242",
+  companyName: "VET camp-Singhpura"
 },
 {
-  name:"Sid",
-  phoneNumber:"1234567890",
-  companyName:"VET camp-Singhpura"
+  name: "Sid",
+  phoneNumber: "1234567890",
+  companyName: "VET camp-Singhpura"
 },
 {
-  name:"Bikram",
-  phoneNumber:"9501736242",
-  companyName:"VET camp-Singhpura"
+  name: "Bikram",
+  phoneNumber: "9501736242",
+  companyName: "VET camp-Singhpura"
 },
 {
-  name:"Manish",
-  phoneNumber:"9501736242",
-  companyName:"VET camp-Singhpura"
+  name: "Manish",
+  phoneNumber: "9501736242",
+  companyName: "VET camp-Singhpura"
 },
 {
-  name:"Rahul Sagar",
-  phoneNumber:"9501736242",
-  companyName:"VET camp-Singhpura"
+  name: "Rahul Sagar",
+  phoneNumber: "9501736242",
+  companyName: "VET camp-Singhpura"
 },
 {
-  name:"Sid",
-  phoneNumber:"9501736242",
-  companyName:"VET camp-Singhpura"
+  name: "Sid",
+  phoneNumber: "9501736242",
+  companyName: "VET camp-Singhpura"
 },
 {
-  name:"Rahul Sagar",
-  phoneNumber:"9501736242",
-  companyName:"VET camp-Singhpura"
+  name: "Rahul Sagar",
+  phoneNumber: "9501736242",
+  companyName: "VET camp-Singhpura"
 },
 {
-  name:"Sid",
-  phoneNumber:"9501736242",
-  companyName:"VET camp-Singhpura"
+  name: "Sid",
+  phoneNumber: "9501736242",
+  companyName: "VET camp-Singhpura"
 },
 {
-  name:"Bikram",
-  phoneNumber:"9501736242",
-  companyName:"VET camp-Singhpura"
+  name: "Bikram",
+  phoneNumber: "9501736242",
+  companyName: "VET camp-Singhpura"
 },
 {
-  name:"Manish",
-  phoneNumber:"9512346567",
-  companyName:"VET camp-Singhpura"
+  name: "Manish",
+  phoneNumber: "9512346567",
+  companyName: "VET camp-Singhpura"
 },
 {
-  name:"Rahul Sagar",
-  phoneNumber:"9501736242",
-  companyName:"VET camp-Singhpura"
+  name: "Rahul Sagar",
+  phoneNumber: "9501736242",
+  companyName: "VET camp-Singhpura"
 },
 ]
-let allData =[];
+let allData = [];
+
+const MARK_AS = [
+  'Present',
+  'Absent'
+]
+
+let arrayOfIds = [];
 
 const AllLead = (props) => {
 
-  const [data,setData] = useState([]);
-  const [name,setName] = useState(null);
-   
+  const [data, setData] = useState([]);
+  const [Alldata, setAllData] = useState([]);
+  const [name, setName] = useState(null);
+  const [campNames, setCampNames] = useState([]);
+  const [campname, setCampname] = useState('');
+  const [markItem, setMarkItem] = useState(false)
+  const [attendenceArray, setAttendenceArray] = useState([]);
+  const [isPresent, setIsPresent] = useState('')
+  const [clearMark, setClearMark] = useState(false)
+
   useEffect(() => {
     getData();
-  
+    getCampName();
   }, [])
-  
-  const getData = async() => {
-    let data=[]
+
+  const getData = async () => {
+    let data = []
+    let newData = []
     await axios
-    .get('http://206.189.129.191/backend/api/v1/getAllData')
-    .then(function (response) {
-      console.log(JSON.stringify(response.data.data.farmers),"ffadfadf")
-      let result = response.data.data.farmers;
-       
-      result.forEach(element => {
-        data.push(element);
+      .get('http://206.189.129.191/backend/api/v1/getAllData')
+      .then(function (response) {
+        // console.log(JSON.stringify(response.data.data.farmers), "ffadfadf")
+        let result = response.data.data.farmers;
+
+        result.forEach(element => {
+          element.isChecked = false;
+          data.push(element);
+        });
+        result.forEach(element => {
+          element.isPresent = false;
+          newData.push(element);
+        });
+        allData.push(data)
+        setData(data);
+        setAllData(newData);
+        // console.log("Data =====> ", data);
+
+      })
+      .catch(function (error) {
+        console.log('Error ===> ', error);
       });
-      allData.push(data)
-      setData(data);
-    })
-    .catch(function (error) {
-      console.log('Error ===> ', error);
-    });
 
   }
- 
+
+  const getCampName = async () => {
+    let campName = [];
+    await axios
+      .get('http://206.189.129.191/backend/api/v1/camps')
+      .then(function (response) {
+        let result = response.data.data.camps;
+        result.forEach(element => {
+          campName.push(element.campName);
+        });
+        // console.log("Camp Name ===>", campName);
+        setCampNames(campName);
+      })
+      .catch(function (error) {
+        console.log('Error ===> ', error);
+      });
+  };
+
   const handleSearchItem = (item) => {
-    console.log(data,'data')
+    // console.log(data, 'data')
     // let originalData = allData;
-    if(item !== ''  ){
-      if(isNaN(item)){
+    if (item !== '') {
+      if (isNaN(item)) {
         let Data = data.filter(
           (e) => {
-              if(e.farmer_name != null)
-              {
-                return e.farmer_name.toLowerCase().includes(item.toLowerCase());
-              }
+            if (e.farmer_name != null) {
+              return e.farmer_name.toLowerCase().includes(item.toLowerCase());
+            }
           },
         );
         setData(Data);
-      }else{
+      } else {
         let Data = data.filter(
           (e) => {
-              if(e.farmer_contact != null)
-              {
-                return e.farmer_contact.includes(item);
-              }
+            if (e.farmer_contact != null) {
+              return e.farmer_contact.includes(item);
+            }
           },
         );
         setData(Data);
       }
-      
-    }else{
+
+    } else {
       setData(allData[0])
-      
+
     }
-  
-        
+
+
+  }
+  const handleCampNameFilter = (item) => {
+    // let place =item
+    let originalData = data;
+    if (item !== '' && item !== undefined) {
+      let Data = originalData.filter((e) => {
+        if (e.camp_name === item) {
+          return e
+        }
+      })
+      setAllData(Data);
+      setCampname(item)
+
+    } else {
+      setAllData(originalData)
+      setCampname("Filter")
+    }
   }
 
+  // const empty = arr => arr.length = 0;
+
+  const handleMarkAs = async (item, markas) => {
+
+    if (markas !== undefined) {
+      item.map((e) => {
+        if (e.isChecked === true) {
+          arrayOfIds.push(e._id)
+        }
+      })
+    }
+    let payload = {
+      "farmer": arrayOfIds
+    }
+
+    // setMarkItem(false)
+    // data.map((e) => {
+    //   if (e.isChecked === true) {
+    //     e.isChecked = false;
+    //   }
+    // })
+    if (payload.farmer.length > 0) {
+      await axios
+        .post('http://206.189.129.191/backend/api/v1/attendance', payload)
+        .then(function (response) {
+          let result = response.data.meta.message;
+          alert(result)
+          arrayOfIds = [];
+          // empty(arrayOfIds)
+          setIsPresent('')
+          setClearMark(true)
+        })
+        .catch(function (error) {
+          console.log('Error ===> ', error);
+        });
+    }
+  }
+
+  // const handleCheckbox = (item) => {
+  // item.map((e) => {
+  //   if (e.isChecked === true) {
+  //     alert(JSON.stringify(e))
+  //   }
+  // })
+  //   console.log(item);
+  // }
+
+
+
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <StatusBar hidden />
-      <Header addBtn = {true} onPress={()=>{props.navigation.navigate('Form')}}/>
+      <Header addBtn={true} onPress={() => { props.navigation.navigate('Form') }} />
       <View style={styles.middleContainer}>
         <Text style={styles.allLeadText}>
           All Leads
         </Text>
 
         <View style={styles.positionRelative}>
-          <Icon
-            name="search"
-            size={14}
-            color="#D5D5D5"
-            style={styles.searchIcon}
-          />
           <TextInput
             style={styles.searchTextInput}
             placeholder="Search"
             value={name}
-            onChangeText={(value)=>{
+            onChangeText={(value) => {
               setName(value);
               handleSearchItem(value);
             }}
+          />
+          <Icon
+            name="search"
+            size={18}
+            color="green"
+            style={styles.searchIcon}
           />
         </View>
       </View>
       <View style={styles.bottomContainer}>
         <View style={styles.flexRow}>
           <CheckBox
-            //value={isSelected}
-            //onValueChange={setSelection}
+            value={markItem}
+            onValueChange={() => {
+
+              setMarkItem((prevState) => !prevState);
+              data.map((e) => {
+                e.isChecked = !markItem;
+              })
+            }
+            }
             style={styles.checkbox}
           />
           <Text style={styles.selectAllText}>
-            Select All
+            All
           </Text>
         </View>
         <View style={styles.dropdownContainer}>
-          <DropDown placeholder="Filter" />
-          <DropDown placeholder="Mark as" />
+          <FormDropDown
+            data={campNames}
+            buttonTextStyle={styles.placeholderStyle}
+            label={'Filter'}
+            selectedValue={campname}
+            onValueChange={(e, i) => handleCampNameFilter(e)}
+            clear={true}
+          />
+        </View>
+        <View style={styles.dropdownContainername}>
+          <FormDropDown
+            data={MARK_AS}
+            buttonTextStyle={styles.placeholderStyle}
+            label={'Mark As'}
+            selectedValue={isPresent}
+            onValueChange={(e, i) => {
+              setIsPresent(e)
+              handleMarkAs(data, e)
+            }}
+          />
         </View>
       </View>
-      {/* <View style={{marginBottom: 20}}> */}
-      <ScrollView showsVerticalScrollIndicator={false} style={{marginBottom: 55}}>
-      {data.map((item,index)=>{
-        {console.log(item)}
-        return(
-        <View style={{marginBottom:15}}>
-         <AllleadCard key={index} name={item.farmer_name} phoneNumber={item.farmer_contact} companyName={item.camp_name}/>
-      </View>
-    )})}
-    </ScrollView>
+      <AllleadCard
+        value={markItem}
+        data={Alldata}
+        clearMark={clearMark}
+        handleclicked={(item) => handleMarkAs(item)}
+      />
     </View>
-    // </View>
   );
 };
 
@@ -209,7 +336,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     paddingHorizontal: 20,
-    marginBottom: 22,
+    // marginBottom: 22,
   },
   addLeadBtn: {
     borderWidth: 1,
@@ -229,55 +356,77 @@ const styles = StyleSheet.create({
     color: '#2E4CFF',
     fontSize: 18,
   },
-  middleContainer:{
-    flexDirection: 'row', 
+  middleContainer: {
+    flexDirection: 'row',
     justifyContent: 'space-between'
   },
-  allLeadText:{
-    fontSize: 16, 
-    color: '#4A03FF', 
+  allLeadText: {
+    fontSize: 16,
+    color: '#4A03FF',
     marginLeft: 20
   },
-  positionRelative:{
-    position: 'relative'
+  positionRelative: {
+    position: 'relative',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
   },
-  searchIcon:{
-    position: 'absolute', 
-    top: 2, 
-    left: 3
+  searchIcon: {
+    position: 'absolute',
+    right: 25,
+    top: 10
   },
-  searchTextInput:{
-    height: 20,
-    width: 72,
+  searchTextInput: {
+    height: 35,
+    width: 200,
     borderWidth: 1,
     borderColor: '#D5D5D5',
     marginRight: 20,
     borderRadius: 4,
-    fontSize: 10,
-    color: '#000',
-    paddingLeft: 22,
+    fontSize: 18,
+    color: '#000000',
+    paddingLeft: 10,
     paddingVertical: 4,
-  },bottomContainer:{
-    flexDirection: 'row', 
-    marginTop: 20, 
-    marginLeft: 20
   },
-  checkbox:{
-    width: 14, 
-    height: 15, 
-    marginRight: 12
+  bottomContainer: {
+    marginTop: 10,
+    marginLeft: 20,
+    marginRight: 20,
+    display: 'flex',
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: 'center'
   },
-  selectAllText:{
-    fontSize: 13, 
-    marginLeft: 10, 
-    color: '#000'
+
+  flexRow: {
+    flex: 1,
+    flexDirection: 'row'
   },
-  dropdownContainer:{
-    flexDirection: 'row', 
-    marginLeft: 110, 
+
+  dropdownContainer: {
+    flex: 2,
     marginRight: 10
   },
-  flexRow:{
-    flexDirection: 'row'
+
+  dropdownContainername: {
+    flex: 2,
+  },
+
+  checkbox: {
+    width: 20,
+    height: 15,
+    marginRight: 12
+  },
+  selectAllText: {
+    fontSize: 13,
+    marginLeft: 2,
+    color: '#000'
+  },
+
+  placeholderStyle: {
+    fontSize: 14,
+    padding: 0,
+    paddingVertical: 4,
+    color: '#000000',
+    // left: 11,
   },
 });
