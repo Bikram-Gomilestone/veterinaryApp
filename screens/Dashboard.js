@@ -22,6 +22,7 @@ const chartConfig = {
 const Dashboard = (props) => {
   const [name,setName] = useState(null);
   const [username,setUsername] = useState(null);
+  const [totalLeads,setTotalLeads] = useState(null);
 
   useEffect(() => {
     getData();
@@ -35,9 +36,10 @@ const Dashboard = (props) => {
     await axios
     .get('http://206.189.129.191/backend/api/v1/getAllData')
     .then(function (response) {
-      console.log(JSON.stringify(response.data.data.farmers),"ffadfadf")
-      let result = response.data.data.farmers[0].farmer_name;
-
+      // console.log(JSON.stringify(response.data.data.farmers),"ffadfadf")
+      let result = response.data.data.farmers[response.data.data.farmers.length - 1].farmer_name;
+      let totalLeadsCount = response.data.data.farmers.length
+      setTotalLeads(totalLeadsCount)
       setName(result);
        
       // result.forEach(element => {
@@ -59,7 +61,7 @@ const Dashboard = (props) => {
         <Text style={styles.lastUpdatedText}>Last updated: 5 Aug, 1:12PM</Text>
       </View>
       <View style={styles.dashboardCard}>
-        <DashboardCard title={"Total Leads"} value={'40+'} />
+        <DashboardCard title={"Total Leads"} value={totalLeads !== null ? totalLeads : '40+'} />
         <DashboardCard title={"Camp attended"} value={'50+'} />
       </View>
       <View style={styles.dashboardCard}>

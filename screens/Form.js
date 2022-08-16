@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 
 import FormDropDown from '../components/FormDropDown';
@@ -499,16 +499,14 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
   const launchCamera = async () => {
     try {
       const res = await ImagePicker.launchCamera(options);
-      //console.log("==============>>>>",res.assets[0]);
       setBase64(res.assets[0].base64);
       setImageUrl(res.assets[0].uri);
-      //let base64ArrayValue = res.assets[0].base64;
-      let base64ArrayValue = res.assets[0];
-      base64ArrayValue.isUploaded = false;
+      let base64ArrayValue = res.assets[0].base64;
+
       val.push(base64ArrayValue);
       //   base64Array.push(base64ArrayValue);
       setBase64Array(prevState => {
-        return [...prevState, res.assets[0]];
+        return [...prevState, res.assets[0].base64];
       });
       if (network) {
         let payload = {
@@ -721,8 +719,8 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
       {/* {console.log(farmerPendingInfo,"farmerPendingInfo")}
       {console.log(offlineImages,"pandingImageUrl")} */}
       <Header />
-      <View style={{marginLeft: 20, marginRight: 33}}>
-        <Text style={{fontSize: 14, color: '#4A03FF', marginBottom: 20}}>
+      <View style={{ marginLeft: 20, marginRight: 33 }}>
+        <Text style={{ fontSize: 14, color: '#4A03FF', marginBottom: 20 }}>
           Please enter all the information of the farmer
         </Text>
         <TextInput
@@ -814,7 +812,7 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
           marginRight: 33,
           marginTop: 25,
         }}>
-        <Text style={{fontSize: 14, color: '#4A03FF', fontWeight: 'bold'}}>
+        <Text style={{ fontSize: 14, color: '#4A03FF', fontWeight: 'bold' }}>
           Upload images
         </Text>
         <TouchableOpacity
@@ -938,11 +936,11 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
               );
             })}
       </View>
-      <View style={{alignItems: 'center', marginVertical: 40}}>
+      <View style={{ alignItems: 'center', marginVertical: 40 }}>
         <TouchableOpacity
           style={styles.submitBtn}
           onPress={() => {
-            handleSubmitButton();
+            launchCamera();
           }}>
           <Text style={styles.submitBtnText}>Submit</Text>
         </TouchableOpacity>
