@@ -7,41 +7,103 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, {useState, useEffect} from 'react';
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const Login = (props) => {
+const Login = props => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+  useEffect(() => {
+    getCampName();
+    getCattleType();
+    getCattleBreed();
+  }, []);
+
+  const getCattleBreed = async () => {
+    let cattleBreed = [];
+    await axios
+
+      .get('http://206.189.129.191/backend/api/v1/cattleCategoriesType')
+      .then(function (response) {
+        let result = response.data.data.categoriestype;
+        result.forEach(element => {
+          cattleBreed.push(element.typeName);
+        });
+        AsyncStorage.setItem('CattleBreed', JSON.stringify(cattleBreed));
+      })
+      .catch(function (error) {
+        console.log('Error ===> ', error);
+      });
+  };
+  const getCattleType = async () => {
+    let cattleType = [];
+    await axios
+      .get('http://206.189.129.191/backend/api/v1/cattleCategories')
+
+      .then(function (response) {
+        let result = response.data.data.categories;
+         console.log(JSON.stringify(result))
+        result.forEach(element => {
+          cattleType.push(element.categoryName);
+        });
+        AsyncStorage.setItem('cattleType', JSON.stringify(cattleType));
+      })
+      .catch(function (error) {
+        console.log('Error ===> ', error);
+      });
+  };
+  const getCampName = async () => {
+    let campName = [];
+    await axios
+      .get('http://206.189.129.191/backend/api/v1/camps')
+      .then(function (response) {
+        let result = response.data.data.camps;
+         console.log(JSON.stringify(result));
+        result.forEach(element => {
+          campName.push(element.campName);
+        });
+        AsyncStorage.setItem('camps', JSON.stringify(campName));
+      })
+      .catch(function (error) {
+        console.log('Error ===> ', error);
+      });
+  };
 
   const handleSubmitButton = async () => {
     let payload = {
       username: username,
-      password: password
-    }
-    await axios.post('http://206.189.129.191/backend/api/v1/auth', payload)
+      password: password,
+    };
+    await axios
+      .post('http://206.189.129.191/backend/api/v1/auth', payload)
       .then(function (response) {
         if (response.data.meta.message === 'Invalid Login credentials') {
-          alert(response.data.meta.message)
+          alert(response.data.meta.message);
         } else {
-          AsyncStorage.setItem("login", 'true')
-          AsyncStorage.setItem('username',response.data.data.user[0].agentName);
-          props.navigation.navigate("Dashboard")
+          AsyncStorage.setItem('login', 'true');
+          AsyncStorage.setItem(
+            'username',
+            response.data.data.user[0].agentName,
+          );
+          getCampName();
+          getCattleType();
+          getCattleBreed();
+          props.navigation.navigate('Dashboard');
         }
       })
       .catch(function (error) {
-        console.log("Error ===> ", error);
+        console.log('Error ===> ', error);
       });
-  }
+  };
 
   return (
     <View style={styles.mainContainer}>
-      <View style={{ height: windowHeight }}>
+      <View style={{height: windowHeight}}>
         <View style={styles.loginUpSec}>
           <Image
             source={require('../assets/loginbg3.jpg')}
@@ -51,10 +113,7 @@ const Login = (props) => {
 
         <View style={styles.loginBottomSec}>
           <View style={styles.loginFormGroup}>
-            <Text
-              style={styles.loginText}>
-              Login
-            </Text>
+            <Text style={styles.loginText}>Login</Text>
             <Text style={styles.loginTitle}>
               To login please enter your username and password
             </Text>
@@ -63,25 +122,20 @@ const Login = (props) => {
               style={styles.usernameTextInputstyle}
               placeholder="Username"
               value={username}
-              onChangeText={(e) => setUsername(e)}
+              onChangeText={e => setUsername(e)}
             />
 
             <TextInput
               style={styles.passwordInputstyle}
               placeholder="Password"
               value={password}
-              onChangeText={(e) => setPassword(e)}
+              onChangeText={e => setPassword(e)}
             />
-            <View
-              style={styles.submitButtonContainer}>
+            <View style={styles.submitButtonContainer}>
               <TouchableOpacity
                 style={styles.submitButtonStyle}
-                onPress={handleSubmitButton}
-              >
-                <Text
-                  style={styles.submitButtonTextStyle}>
-                  Submit
-                </Text>
+                onPress={handleSubmitButton}>
+                <Text style={styles.submitButtonTextStyle}>Submit</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -96,7 +150,7 @@ export default Login;
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    height: windowHeight
+    height: windowHeight,
   },
   loginUpSec: {
     flexDirection: 'row',
@@ -138,7 +192,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 20,
     marginHorizontal: 5,
-    color: '#000000'
+    color: '#000000',
   },
   usernameTextInputstyle: {
     borderWidth: 1,
@@ -165,7 +219,7 @@ const styles = StyleSheet.create({
   submitButtonContainer: {
     alignItems: 'center',
     marginTop: 30,
-    marginBottom: 35
+    marginBottom: 35,
   },
   submitButtonStyle: {
     borderColor: '#2E4CFF',
@@ -178,6 +232,6 @@ const styles = StyleSheet.create({
   submitButtonTextStyle: {
     color: '#fff',
     textAlign: 'center',
-    fontSize: 16
-  }
+    fontSize: 16,
+  },
 });

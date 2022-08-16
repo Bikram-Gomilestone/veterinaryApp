@@ -12,7 +12,7 @@ const FormDropDown = props => {
         selectedValue={props.selectedValue}
         onValueChange={props.onValueChange}>
           <Picker.Item label={props.label} />
-        {props.data.map(e => (
+        {props.data?.map(e => (
           <Picker.Item label={e} value={e} />
         ))}
       </Picker>
