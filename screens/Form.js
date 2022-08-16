@@ -940,7 +940,7 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
         <TouchableOpacity
           style={styles.submitBtn}
           onPress={() => {
-            launchCamera();
+            handleSubmitButton();
           }}>
           <Text style={styles.submitBtnText}>Submit</Text>
         </TouchableOpacity>
