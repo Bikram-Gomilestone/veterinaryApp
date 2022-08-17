@@ -107,7 +107,7 @@ const AllleadCard = (props) => {
   }
 
   return (
-    <View key={render}>
+    <ScrollView key={render} style={{marginBottom:20}}>
       <FlatList
         data={data}
         renderItem={(item, index) => {
@@ -206,7 +206,7 @@ const AllleadCard = (props) => {
         }}
         keyExtractor={item => item._id}
       />
-    </View>
+    </ScrollView>
   );
 };
 

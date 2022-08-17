@@ -61,7 +61,7 @@ const Dashboard = (props) => {
         <Text style={styles.lastUpdatedText}>Last updated: 5 Aug, 1:12PM</Text>
       </View>
       <View style={styles.dashboardCard}>
-        <DashboardCard title={"Total Leads"} value={totalLeads !== null ? totalLeads : '40+'} />
+        <DashboardCard title={"Total Leads"} value={totalLeads !== null ? totalLeads : '40+'} onPress={()=>{props.navigation.navigate('AllLead')}} />
         <DashboardCard title={"Camp attended"} value={'50+'} />
       </View>
       <View style={styles.dashboardCard}>

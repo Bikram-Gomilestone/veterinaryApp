@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import Header from '../components/Header';
 
 import FormDropDown from '../components/FormDropDown';
@@ -34,7 +34,7 @@ const options = {
 };
 
 let pendingImages = [];
-let farmerData = [];
+let FarmerInfoData = [];
 
 const Form = props => {
   const [isFocus, setIsFocus] = useState(false);
@@ -78,20 +78,29 @@ const Form = props => {
     getCattleType();
     getCattleBreed();
     getCampName();
+    // checkData();
   }, []);
 
-  useEffect(() => {
-    getCattleType();
-    getCattleBreed();
-    getCampName();
-  }, [base64Array]);
+  // useEffect(() => {
+  //   getCattleType();
+  //   getCattleBreed();
+  //   getCampName();
+  // }, [base64Array]);
+  // const checkData = async () => {
+  //   let farmerData = await AsyncStorage.getItem('FarmerData');
+  //   console.log(
+  //     farmerData,
+  //     "let farmerData = await AsyncStorage.getItem('FarmerData');",
+  //   );
+    
+  // };
 
   useEffect(() => {
     setInterval(() => {
       handleStatus();
     }, 2000);
     if (network) {
-      console.log('network back');
+      // console.log('network back');
       checkInternetAvailability();
     } else {
       checkInternetAvailability();
@@ -129,6 +138,7 @@ const Form = props => {
     axios
       .get('https://www.google.com/')
       .then(function (response) {
+        console.log('response');
         // handle success
         setStatus(true);
         setNetAvailable(true);
@@ -306,68 +316,64 @@ const Form = props => {
   //   //  .catch((err)=>{console.log(err)})
   //   //  }
   // };
-const getImageURL=async(payload, uid,farmerinfo)=>{
-  let apiRequest = await axios.post(
-    'http://206.189.129.191/backend/api/v1/uploadImage',
-    payload,
-  );
-    let tmp=`http://206.189.129.191/${apiRequest.data.url}`;
-  return { url:tmp,payload,uid,farmerinfo}
-}
-  const handleOfflineImageUpload = async (forms, uid,farmerinfo,payload) => {
-    var farmerinfo=farmerinfo
-    console.log(uid,'iiiiiiiiiii')
-    let jobs =[];
-    Object.keys(forms).forEach(key => {
-      let x= forms[key];
-      jobs.push({
-        data:x
-      });
+  const getImageURL = async (payload, uid, farmerinfo) => {
+    let apiRequest = await axios.post(
+      'http://206.189.129.191/backend/api/v1/uploadImage',
+      payload,
+    );
+    let tmp = `http://206.189.129.191/${apiRequest.data.url}`;
+    return {url: tmp, payload, uid, farmerinfo};
+  };
 
+  const handleOfflineImageUpload = async (forms, uid, farmerinfo, payload) => {
+    var farmerinfo = farmerinfo;
+    // console.log(uid,'iiiiiiiiiii')
+    let jobs = [];
+    Object.keys(forms).forEach(key => {
+      let x = forms[key];
+      jobs.push({
+        data: x,
+      });
     });
 
     jobs.forEach(job => {
-      let x= job.data;
-      let urls=[];
-      x.forEach((z)=>{
-        urls.push(z.url);   
-        uid=z.uid;
-        console.log(uid,z,'ooooo>>>>')   
+      let x = job.data;
+      let urls = [];
+      x.forEach(z => {
+        urls.push(z.url);
+        uid = z.uid;
+        // console.log(uid,z,'ooooo>>>>')
       });
-      let images=urls;
-      let activefarm;
+      let images = urls;
+      let activefarm = {};
       // if(farmerinfo.imageUrl != undefined)
-      
+
       //    images = farmerinfo.imageUrl;
-    
-     farmerinfo.forEach((x)=>{
-      if(x.formuid==uid)
-      activefarm=x;
-     });
-     activefarm.imageUrl=images;
-  
-     farmerinfo.forEach((x)=>{
-      if(x.formuid==uid)
-      x=activefarm
-     });
+
+      farmerinfo?.forEach(x => {
+        if (x.formuid == uid) activefarm = x;
+      });
+      activefarm.imageUrl = images;
+
+      farmerinfo?.forEach(x => {
+        if (x.formuid == uid) x = activefarm;
+      });
     });
-   
-   
 
-
-   await AsyncStorage.setItem('FarmerData',JSON.stringify(farmerinfo));
+    await AsyncStorage.setItem('FarmerData', JSON.stringify(farmerinfo));
     // imagesUrl: JSON.stringify(uploadImageUrl).replaceAll('"', ''),
 
-    console.log(farmerinfo,'======');
-    return true
+    // console.log(farmerinfo,'======');
+    return true;
   };
 
   const sendPendingImageData = async () => {
+    
     let promiseArray = [];
     let PendingImages = await AsyncStorage.getItem('pendingImage');
     let farmerData = await AsyncStorage.getItem('FarmerData');
-    console.log(JSON.parse(PendingImages), 'PendingImages');
-    console.log(JSON.parse(farmerData), 'farmerData');
+     console.log(JSON.parse(PendingImages), 'PendingImages');
+     console.log(JSON.parse(farmerData), 'farmerData');
     if (
       PendingImages !== null &&
       PendingImages !== undefined &&
@@ -380,8 +386,8 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
       imageData.forEach(element => {
         farmerinfo.forEach((item, key) => {
           if (element.formuid === item.formuid) {
-            console.log(element, 'element');
-            console.log(item, 'item');
+            // console.log(element, 'element');
+            // console.log(item, 'item');
             element.images.forEach(i => {
               // console.log(i.base64,"IIIIIII")
               let payload = {
@@ -389,9 +395,9 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
                 fileName: i.fileName,
                 base64Image: `data:image/jpeg;base64,${i.base64}`,
               };
-              console.log(payload);
-             let res= getImageURL(payload, item.formuid,farmerinfo);// handleOfflineImageUpload(payload, item.formuid,farmerinfo);
-             promiseArray.push(res);
+              // console.log(payload);
+              let res = getImageURL(payload, item.formuid, farmerinfo); // handleOfflineImageUpload(payload, item.formuid,farmerinfo);
+              promiseArray.push(res);
             });
             // var apiRequest = axios.post(
             //   'http://206.189.129.191/backend/api/v1/uploadImage',
@@ -402,29 +408,28 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
         });
       });
       Promise.all(promiseArray)
-        .then(async(res) => {
-          console.log('all done ........',res);
-          let urls=[];
+        .then(async res => {
+          // console.log('all done ........',res);
+          let urls = [];
           let payload;
           let uid;
           let farmerinfo;
-          res.forEach((x)=>{
-            payload=x.payload;
-            uid=x.uid;
-            farmerinfo=x.farmerinfo;
+          res.forEach(x => {
+            payload = x.payload;
+            uid = x.uid;
+            farmerinfo = x.farmerinfo;
           });
 
-          var groupBy = function(xs, key) {
-            return xs.reduce(function(rv, x) {
+          var groupBy = function (xs, key) {
+            return xs.reduce(function (rv, x) {
               (rv[x[key]] = rv[x[key]] || []).push(x);
               return rv;
             }, {});
           };
 
-          let forms=groupBy(res, 'uid');        
-         await handleOfflineImageUpload(forms,uid,farmerinfo,payload);
+          let forms = groupBy(res, 'uid');
+          await handleOfflineImageUpload(forms, uid, farmerinfo, payload);
           SyncOfflineData();
-         
         })
         .catch(err => {
           console.log(err);
@@ -432,52 +437,51 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
     }
   };
 
-  const SyncOfflineData=async()=>{
-    if(isUploading) return false;
-    let pendingData =await AsyncStorage.getItem('FarmerData');
-    let payload=[];
-    if(pendingData)
-    {
-      let jobs =JSON.parse(pendingData);
-      jobs.forEach((x)=>{
-        console.log(x)
+  const SyncOfflineData = async () => {
+    if (isUploading) return false;
+    let pendingData = await AsyncStorage.getItem('FarmerData');
+    console.log(JSON.parse(pendingData), '====>farmerData');
+    let payload = [];
+    if (pendingData) {
+      let jobs = JSON.parse(pendingData);
+      jobs.forEach(x => {
+        console.log(x);
         let pendingForm = {
           farmerName: x.farmerName,
           farmerContact: x.farmerContact,
           cattleType: x.cattleType,
           cattleBreed: x.cattleBreed,
           campName: x.campName,
-          imagesUrl: JSON.stringify(x.imageUrl).replaceAll('"', ''),
+          imagesUrl: JSON.stringify(x.imageUrl).replace(/[" "]/g, ''),
         };
-        payload.push(pendingForm)
+        payload.push(pendingForm);
       });
-      console.log('Ready to upload ....',payload);
-      setIsUploading(true)
-       await axios.post(
-              'http://206.189.129.191/backend/api/v1/storefarmerdetails',
-              payload,
-            )
-            .then((res)=>{
-              if(res !== null ){
-                console.log("response",res);
-                if(payload.length > 0){
-                  console.log(payload,"after")
-                  AsyncStorage.removeItem('FarmerData',()=>{
-                    setIsUploading(false)
-                  });
-                  AsyncStorage.removeItem('pendingImage', () => {
-                    alert('Pending Data Send')
-                  });
-                  
-                }
-              }
-            })
-             .catch((err)=>{console.log(err)})
-
+      console.log('Ready to upload ....', payload);
+      setIsUploading(true);
+      await axios
+        .post(
+          'http://206.189.129.191/backend/api/v1/storefarmerdetails',
+          payload,
+        )
+        .then(res => {
+          if (res !== null) {
+            // console.log("response",res);
+            if(payload.length > 0){
+            console.log(payload, 'after');
+            AsyncStorage.removeItem('FarmerData', () => {
+              FarmerInfoData=[];
+            });
+            AsyncStorage.removeItem('pendingImage', () => {
+              alert('Pending Data Send');
+            });
+            setIsUploading(false);
+          }
+        }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
-
-   
-
   };
 
   // const getPendingFarmerInfo = async () => {
@@ -588,7 +592,6 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
   };
 
   const savePendingImages_task = async (offlineImages, formuid) => {
-    debugger;
     let previousImages = await AsyncStorage.getItem('pendingImage');
     if (previousImages) {
       previousImages = JSON.parse(previousImages);
@@ -624,8 +627,8 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
     setSelectCattleBreed(null);
     setShowOfflineImg([]);
     setOfflineImages([]);
-    alert('network Unavailable form stored in storage');
     setFormuid(Math.random());
+    alert('network Unavailable form stored in storage');
   };
 
   const handleSubmitButton = () => {
@@ -650,7 +653,6 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
       return;
     }
     if (network) {
-      alert(uploadImageUrl.length);
       if (uploadImageUrl.length <= 0) {
         alert('Please upload an Image');
         return;
@@ -662,9 +664,9 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
       }
     }
 
-    console.log(farmerData, 'data before');
+    //console.log(farmerData, 'data before');
 
-    farmerData.push({
+    FarmerInfoData.push({
       farmerName: name,
       farmerContact: mobileNumber,
       cattleType: selectCattleType,
@@ -673,10 +675,10 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
       formuid,
     });
 
-    console.log(farmerData, 'data after');
+    // console.log(farmerData, 'data after');
 
     if (!network) {
-      SaveOfflineData(farmerData, offlineImages);
+      SaveOfflineData(FarmerInfoData, offlineImages);
     } else {
       let agentDetails = [
         {
@@ -685,11 +687,11 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
           cattleType: selectCattleType,
           cattleBreed: selectCattleBreed,
           campName: selectedCampName,
-          imagesUrl: JSON.stringify(uploadImageUrl).replaceAll('"', ''),
+          imagesUrl: JSON.stringify(uploadImageUrl).replace(/[" "]/g, ''),
         },
       ];
       console.log(agentDetails, 'agentDetails');
-      // console.log(str)
+
       axios
         .post(
           'http://206.189.129.191/backend/api/v1/storefarmerdetails',
@@ -705,7 +707,7 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
           setUploadImageUrl([]);
           setFormuid(Math.random());
 
-          console.log(response);
+          // console.log(response);
         })
         .catch(function (error) {
           console.log(error);
@@ -719,8 +721,8 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
       {/* {console.log(farmerPendingInfo,"farmerPendingInfo")}
       {console.log(offlineImages,"pandingImageUrl")} */}
       <Header />
-      <View style={{ marginLeft: 20, marginRight: 33 }}>
-        <Text style={{ fontSize: 14, color: '#4A03FF', marginBottom: 20 }}>
+      <View style={{marginLeft: 20, marginRight: 33}}>
+        <Text style={{fontSize: 14, color: '#4A03FF', marginBottom: 20}}>
           Please enter all the information of the farmer
         </Text>
         <TextInput
@@ -812,7 +814,7 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
           marginRight: 33,
           marginTop: 25,
         }}>
-        <Text style={{ fontSize: 14, color: '#4A03FF', fontWeight: 'bold' }}>
+        <Text style={{fontSize: 14, color: '#4A03FF', fontWeight: 'bold'}}>
           Upload images
         </Text>
         <TouchableOpacity
@@ -834,7 +836,7 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
         {network
           ? uploadImageUrl !== undefined &&
             uploadImageUrl.map((e, i) => {
-              console.log('==============>>>>', e);
+              // console.log('==============>>>>', e);
               return (
                 <>
                   <View
@@ -936,7 +938,7 @@ const getImageURL=async(payload, uid,farmerinfo)=>{
               );
             })}
       </View>
-      <View style={{ alignItems: 'center', marginVertical: 40 }}>
+      <View style={{alignItems: 'center', marginVertical: 40}}>
         <TouchableOpacity
           style={styles.submitBtn}
           onPress={() => {

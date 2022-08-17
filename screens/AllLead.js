@@ -153,27 +153,27 @@ const AllLead = (props) => {
     // let originalData = allData;
     if (item !== '') {
       if (isNaN(item)) {
-        let Data = data.filter(
+        let Data = Alldata.filter(
           (e) => {
             if (e.farmer_name != null) {
               return e.farmer_name.toLowerCase().includes(item.toLowerCase());
             }
           },
         );
-        setData(Data);
+        setAllData(Data);
       } else {
-        let Data = data.filter(
+        let Data = Alldata.filter(
           (e) => {
             if (e.farmer_contact != null) {
               return e.farmer_contact.includes(item);
             }
           },
         );
-        setData(Data);
+        setAllData(Data);
       }
 
     } else {
-      setData(allData[0])
+      setAllData(data)
 
     }
 
@@ -249,7 +249,7 @@ const AllLead = (props) => {
   return (
     <View style={{ flex: 1 }}>
       <StatusBar hidden />
-      <Header addBtn={true} onPress={() => { props.navigation.navigate('Form') }} />
+      <Header addBtn={false} onPress={() => { props.navigation.navigate('Form') }} />
       <View style={styles.middleContainer}>
         <Text style={styles.allLeadText}>
           All Leads
