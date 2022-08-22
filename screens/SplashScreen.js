@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StatusBar, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
@@ -17,9 +17,12 @@ const SplashScreen = (props) => {
   })
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F1F7FC' }}>
-      <Image source={require('../assets/mainlogo.png')} />
-      <Text style={{ fontSize: 40, marginTop: 35,color:'#000000' }}>Veterinary App</Text>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(145, 230, 253, 0.3)' }}>
+      <StatusBar hidden />
+      <View style={{backgroundColor:'#fff',padding:2,borderRadius:100,elevation:20}}>
+      <Image source={require('../assets/mainlogo.png')} style={{width:120,height:120,}}/>
+      </View>
+      <Text style={{ fontSize: 40, marginTop: 40, color:'#000' }}>Field Agent App</Text>
     </View>
   )
 }

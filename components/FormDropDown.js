@@ -59,12 +59,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     justifyContent: 'center',
     borderColor: '#D5D5D5',
+    borderRadius:10,
   },
   dropdownStyle: {
     width: '100%',
-    height: 40,
+    height: 50,
     borderWidth: 1,
     borderColor: '#D5D5D5',
+    borderRadius:10,
   },
   placeholderStyle: {
     fontSize: 14,

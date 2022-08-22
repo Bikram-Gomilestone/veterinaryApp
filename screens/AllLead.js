@@ -155,8 +155,8 @@ const AllLead = (props) => {
       if (isNaN(item)) {
         let Data = Alldata.filter(
           (e) => {
-            if (e.farmer_name != null) {
-              return e.farmer_name.toLowerCase().includes(item.toLowerCase());
+            if (e.farmerName != null) {
+              return e.farmerName.toLowerCase().includes(item.toLowerCase());
             }
           },
         );
@@ -164,8 +164,8 @@ const AllLead = (props) => {
       } else {
         let Data = Alldata.filter(
           (e) => {
-            if (e.farmer_contact != null) {
-              return e.farmer_contact.includes(item);
+            if (e.farmerContact != null) {
+              return e.farmerContact.includes(item);
             }
           },
         );
@@ -184,7 +184,7 @@ const AllLead = (props) => {
     let originalData = data;
     if (item !== '' && item !== undefined) {
       let Data = originalData.filter((e) => {
-        if (e.camp_name === item) {
+        if (e.campName === item) {
           return e
         }
       })
@@ -247,9 +247,9 @@ const AllLead = (props) => {
 
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ backgroundColor: '#ffffff', flex: 1 }}>
       <StatusBar hidden />
-      <Header addBtn={false} onPress={() => { props.navigation.navigate('Form') }} />
+      <Header addBtn={false} hide={true} goBack={() => { props.navigation.navigate('Dashboard') }} />
       <View style={styles.middleContainer}>
         <Text style={styles.allLeadText}>
           All Leads
@@ -259,6 +259,7 @@ const AllLead = (props) => {
           <TextInput
             style={styles.searchTextInput}
             placeholder="Search"
+            placeholderTextColor={'#000000'}
             value={name}
             onChangeText={(value) => {
               setName(value);
@@ -268,7 +269,7 @@ const AllLead = (props) => {
           <Icon
             name="search"
             size={18}
-            color="green"
+            color="#058cb2"
             style={styles.searchIcon}
           />
         </View>
@@ -319,6 +320,7 @@ const AllLead = (props) => {
         data={Alldata}
         clearMark={clearMark}
         handleclicked={(item) => handleMarkAs(item)}
+        navigation={props.navigation}
       />
     </View>
   );
@@ -335,7 +337,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     display: 'flex',
     flexDirection: 'row',
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     // marginBottom: 22,
   },
   addLeadBtn: {
@@ -358,12 +360,15 @@ const styles = StyleSheet.create({
   },
   middleContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    alignItems:'center',
+    paddingTop:20,
+
   },
   allLeadText: {
-    fontSize: 16,
-    color: '#4A03FF',
-    marginLeft: 20
+    fontSize: 24,
+    color: '#000000',
+    marginLeft: 10
   },
   positionRelative: {
     position: 'relative',
@@ -376,21 +381,21 @@ const styles = StyleSheet.create({
     top: 10
   },
   searchTextInput: {
-    height: 35,
+    height: 40,
     width: 200,
     borderWidth: 1,
     borderColor: '#D5D5D5',
-    marginRight: 20,
-    borderRadius: 4,
-    fontSize: 18,
+    marginRight: 10,
+    borderRadius: 10,
+    fontSize: 16,
     color: '#000000',
     paddingLeft: 10,
     paddingVertical: 4,
   },
   bottomContainer: {
     marginTop: 10,
-    marginLeft: 20,
-    marginRight: 20,
+    marginLeft: 5,
+    marginRight: 10,
     display: 'flex',
     justifyContent: "space-between",
     flexDirection: "row",
@@ -404,17 +409,20 @@ const styles = StyleSheet.create({
 
   dropdownContainer: {
     flex: 2,
-    marginRight: 10
+    marginRight: 10,
+    height:40,
   },
 
   dropdownContainername: {
     flex: 2,
+    height:40,
   },
 
   checkbox: {
     width: 20,
     height: 15,
-    marginRight: 12
+    marginRight: 12,
+    marginLeft:7,
   },
   selectAllText: {
     fontSize: 13,

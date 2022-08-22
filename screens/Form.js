@@ -16,6 +16,8 @@ import Icon from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 import axios from 'axios';
+import { EventRegister } from 'react-native-event-listeners';
+
 
 import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -78,6 +80,7 @@ const Form = props => {
     getCattleType();
     getCattleBreed();
     getCampName();
+ 
     // checkData();
   }, []);
 
@@ -94,6 +97,14 @@ const Form = props => {
   //   );
     
   // };
+  useEffect(() => {
+     EventRegister.addEventListener('FarmerInfoData', () => {alert('call')});
+     return () => {
+      // unsubscribe event
+      EventRegister.removeEventListener("FarmerInfoData");
+    };
+  }, [])
+  
 
   useEffect(() => {
     setInterval(() => {
@@ -209,113 +220,7 @@ const Form = props => {
       });
   };
 
-  // const getPendingImageData = async () => {
-  //   let images = await AsyncStorage.getItem('pendingImage');
-  //   if (images !== null && images !== undefined) {
-  //     AsyncStorage.getItem('pendingImage').then(value => {
-  //       let data = JSON.parse(value);
-  //       AsyncStorage.setItem('pendingImage', JSON.stringify(data));
-  //       console.log(data, 'get pending image data');
 
-  //       setOfflineImages(data);
-  //     });
-  //   }
-  // };
-
-  // const handleOfflineData = async uniqueUrlArray => {
-  //   console.log(uniqueUrlArray);
-  //   let setUrl = uniqueUrlArray;
-  //   //   let imagesUrl = unique
-  //   let promiseArray = [];
-  //   let payload = [];
-  //   let urlArray = [];
-  //   let PendingImages = await AsyncStorage.getItem('pendingImage');
-  //   console.log(pendingImages, 'pending images');
-  //   let farmerData = await AsyncStorage.getItem('FarmerData');
-  //   console.log(farmerData, 'farmerData');
-  //   if (
-  //     PendingImages !== null &&
-  //     PendingImages !== undefined &&
-  //     farmerData !== undefined &&
-  //     farmerData !== null
-  //   ) {
-  //     let farmerinfo = JSON.parse(farmerData);
-  //     let imageData = JSON.parse(PendingImages);
-  //     setUrl.forEach(element => {
-  //       farmerinfo.forEach((item, key) => {
-  //         if (element.farmerContact === item.farmerContact) {
-  //           let url = `http://206.189.129.191/${element.url}`;
-
-  //           // urlArray.length === 0 && urlArray.push(url);
-
-  //           // urlArray.length >= 1 &&
-  //           //   urlArray?.map(e => {
-  //           //     alert(e);
-  //           //     if (e != url) {
-  //           //       urlArray.push(url);
-  //           //     }
-  //           //   });
-  //           let pendingForm = {
-  //             farmerName: item.farmerName,
-  //             farmerContact: item.farmerContact,
-  //             cattleType: item.cattleType,
-  //             cattleBreed: item.cattleBreed,
-  //             campName: item.campName,
-  //             imagesUrl: JSON.stringify([url]).replaceAll('"', ''),
-  //           };
-  //           payload.push(pendingForm);
-  //           console.log(payload.length, 'pandingImageUrl');
-  //         }
-  //       });
-  //     });
-  //     console.log(payload, '<=====payload');
-  //     console.log(urlArray, '<=====urlArray');
-
-  //     //  axios.post(
-  //     //         'http://206.189.129.191/backend/api/v1/storefarmerdetails',
-  //     //         payload,
-  //     //       )
-  //     //       .then((res)=>{
-  //     //         if(res !== null ){
-  //     //           console.log("response",res);
-  //     //           if(payload.length > 0){
-  //     //             console.log(payload,"after")
-  //     //             AsyncStorage.removeItem('FarmerData');
-  //     //             AsyncStorage.removeItem('pendingImage', () => {
-  //     //               alert('Pending Data Send')
-  //     //             });
-  //     //           }
-  //     //         }
-  //     //       })
-  //     //        .catch((err)=>{console.log(err)})
-  //   }
-  //   // promiseArray.push(apiRequest);
-  //   // if(payload.length >= 0){
-  //   //   payload.forEach(element => {
-  //   //     let farmerData = [element]
-  //   //     console.log(farmerData,"farmerData");
-  //   //     var apiRequest = axios.post(
-  //   //         'http://206.189.129.191/backend/api/v1/storefarmerdetails',
-  //   //         farmerData,
-  //   //       );
-  //   //       promiseArray.push(apiRequest);
-  //   //    });
-  //   //   Promise.all(promiseArray)
-  //   //  .then((res)=>{
-  //   //   if(res !== null ){
-  //   //     console.log("response",res);
-  //   //     if(payload.length > 0){
-  //   //       console.log(payload,"after")
-  //   //       AsyncStorage.removeItem('FarmerData');
-  //   //       AsyncStorage.removeItem('pendingImage', () => {
-  //   //         alert('Pending Data Send')
-  //   //       });
-  //   //     }
-  //   //   }
-  //   // })
-  //   //  .catch((err)=>{console.log(err)})
-  //   //  }
-  // };
   const getImageURL = async (payload, uid, farmerinfo) => {
     let apiRequest = await axios.post(
       'http://206.189.129.191/backend/api/v1/uploadImage',
@@ -716,18 +621,20 @@ const Form = props => {
   };
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <View style={{ backgroundColor: '#ffffff', flex: 1 }}>
       <StatusBar hidden />
       {/* {console.log(farmerPendingInfo,"farmerPendingInfo")}
       {console.log(offlineImages,"pandingImageUrl")} */}
-      <Header />
-      <View style={{marginLeft: 20, marginRight: 33}}>
-        <Text style={{fontSize: 14, color: '#4A03FF', marginBottom: 20}}>
-          Please enter all the information of the farmer
+      <Header addBtn={false} hide={true} goBack={() => { props.navigation.goBack() }} />
+      <ScrollView showsVerticalScrollIndicator={false} style={{paddingTop:20}} >
+      <View style={{marginLeft: 10,marginRight:10}}>
+        <Text style={{fontSize: 18, color: '#000000', marginBottom: 20}}>
+          Please enter all information of farmer
         </Text>
         <TextInput
           style={styles.textInputBox}
           placeholder={'Enter name'}
+          placeholderTextColor="#000000"
           value={name}
           onChangeText={name => {
             setName(name);
@@ -737,6 +644,8 @@ const Form = props => {
           style={styles.textInputBox}
           keyboardType={'number-pad'}
           placeholder={'Mobile number'}
+          placeholderTextColor="#000000"
+          maxLength={10}
           value={mobileNumber}
           onChangeText={mobileNumber => {
             setMobileNumber(mobileNumber);
@@ -810,11 +719,11 @@ const Form = props => {
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
-          marginLeft: 20,
-          marginRight: 33,
+          marginLeft: 10,
+          marginRight:10,
           marginTop: 25,
         }}>
-        <Text style={{fontSize: 14, color: '#4A03FF', fontWeight: 'bold'}}>
+        <Text style={{fontSize: 14, color: '#058cb2', fontWeight: 'bold',paddingTop:5}}>
           Upload images
         </Text>
         <TouchableOpacity
@@ -823,7 +732,7 @@ const Form = props => {
             launchCamera();
           }}>
           <Text style={styles.btnText}>
-            <Icon name="plus" size={14} color="#2E4CFF" /> Add image
+            <Icon name="plus" size={14} color="#058cb2" /> Add image
           </Text>
         </TouchableOpacity>
       </View>
@@ -841,10 +750,11 @@ const Form = props => {
                 <>
                   <View
                     style={{
-                      width: 108,
+                      width: 106,
                       height: 76,
                       marginTop: 24,
-                      marginLeft: 20,
+                      marginLeft: 10,
+                      marginBottom:20,
                     }}>
                     <View style={{position: 'relative'}}>
                       <TouchableOpacity
@@ -869,7 +779,7 @@ const Form = props => {
                           <AntDesign
                             name="close"
                             size={14}
-                            color="black"
+                            color="#ffffff"
                             style={styles.icon}
                           />
                         </Text>
@@ -878,7 +788,7 @@ const Form = props => {
                       <Image
                         source={{uri: e}}
                         //source={{uri: 'http://206.189.129.191/images/rn_image_picker_lib_temp_9ea27a20-c7b7-46aa-b7db-ed7cf4c382d9.jpg.jpeg'}}
-                        style={{width: '100%', height: '100%'}}
+                        style={{width: '100%', height: '100%',borderRadius:10,}}
                       />
                     </View>
                   </View>
@@ -938,7 +848,7 @@ const Form = props => {
               );
             })}
       </View>
-      <View style={{alignItems: 'center', marginVertical: 40}}>
+      <View style={{alignItems: 'center',marginBottom:150,marginTop:40,}}>
         <TouchableOpacity
           style={styles.submitBtn}
           onPress={() => {
@@ -948,6 +858,7 @@ const Form = props => {
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </View>
   );
 };
 
@@ -956,26 +867,27 @@ export default Form;
 const styles = StyleSheet.create({
   textInputBox: {
     width: '100%',
-    height: 40,
+    height: 50,
     borderWidth: 1,
     borderColor: '#D5D5D5',
-    fontSize: 14,
+    fontSize: 16,
     color: '#000000',
     paddingLeft: 22,
     paddingVertical: 4,
     marginBottom: 12,
+    borderRadius:10,
   },
   addLeadBtn: {
     borderWidth: 1,
-    width: 85,
-    height: 29,
+    width: 130,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: '#2E4CFF',
+    borderColor: '#058cb2',
     borderRadius: 5,
   },
   btnText: {
-    color: '#2E4CFF',
+    color: '#058cb2',
     fontSize: 12,
     fontWeight: 'bold',
   },
@@ -983,14 +895,14 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   submitBtn: {
-    borderWidth: 1,
-    width: 120,
-    height: 30,
+    borderWidth: 0,
+    width: 130,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: '#2E4CFF',
+    borderColor: '#058cb2',
     borderRadius: 5,
-    backgroundColor: '#2E4CFF',
+    backgroundColor: '#058cb2',
   },
   placeholderStyle: {
     fontSize: 14,
@@ -998,6 +910,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     color: '#000000',
     left: 110,
+    borderRadius:10,
   },
   campNamePlaceholderStyle: {
     fontSize: 14,
@@ -1012,4 +925,5 @@ const styles = StyleSheet.create({
     top: 2,
     zIndex: 999,
   },
+ 
 });

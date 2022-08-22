@@ -1,48 +1,69 @@
-import { Image, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native'
+import { Image, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
+import Header from './Header'
+import Icon from 'react-native-vector-icons/Feather';
+import { useNavigation } from '@react-navigation/native';
 
 const ViewDetails = (props) => {
+  const navigation = useNavigation();
   // console.log("view details", props.data.images);
   return (
-    <View style={[styles.centeredView, { height: 200 + StatusBar.currentHeight }]}>
-      <View style={{ flexDirection: 'row' }}>
-        <Text style={styles.modalText}>Name : </Text>
-        <Text style={styles.modalText}>{props.data.farmer_name}</Text>
-      </View>
-      <View style={{ flexDirection: 'row' }}>
-        <Text style={styles.modalText}>Mobile Number :</Text>
-        <Text style={styles.modalText}>{props.data.farmer_contact}</Text>
-      </View>
-      <View style={{ flexDirection: 'row' }}>
-        <Text style={styles.modalText}>Vet Camp Name :</Text>
-        <Text style={styles.modalText}>{props.data.camp_name}</Text>
-      </View>
-      <View style={{ flexDirection: 'row' }}>
-        <Text style={styles.modalText}>Cattle Name :</Text>
-        <Text style={styles.modalText}>{props.data.cattle_type}</Text>
-      </View>
-      <View style={{ flexDirection: 'row' }}>
-        <Text style={styles.modalText}>Breed Name :</Text>
-        <Text style={styles.modalText}>{props.data.cattle_breed}</Text>
-      </View>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-      >
+    <View style={{ backgroundColor: '#ffffff', flex: 1 }}>
+      <Header addBtn={false} hide={true}  goBack={props.goBack} />
+      <ScrollView style={{ marginHorizontal: 10, }} showsVerticalScrollIndicator={false}>
+        <Text style={styles.mainHeading}>Farmer Details</Text>
+        <View style={{ flexDirection: 'row', }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: 140, marginRight: 10, }}>
+            <Text style={styles.modalText}>Name</Text>
+            <Text style={styles.modalText}>:</Text>
+          </View>
+          <Text style={styles.modalSubText}>{props.data.farmerName}</Text>
+        </View>
         <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: 140, marginRight: 10, }}>
+            <Text style={styles.modalText}>Mobile Number</Text>
+            <Text style={styles.modalText}>:</Text>
+          </View>
+          <Text style={styles.modalSubText}>{props.data.farmerContact}</Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: 140, marginRight: 10, }}>
+            <Text style={styles.modalText}>Vet Camp Name</Text>
+            <Text style={styles.modalText}>:</Text>
+          </View>
+          <Text style={styles.modalSubText}>{props.data.campName}</Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: 140, marginRight: 10, }}>
+            <Text style={styles.modalText}>Cattle Name</Text>
+            <Text style={styles.modalText}>:</Text>
+          </View>
+          <Text style={styles.modalSubText}>{props.data.cattle_type}</Text>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: 140, marginRight: 10, }}>
+            <Text style={styles.modalText}>Breed Name</Text>
+            <Text style={styles.modalText}>:</Text>
+          </View>
+          <Text style={styles.modalSubText}>{props.data.cattle_breed}</Text>
+        </View>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 10, justifyContent: 'flex-start' }}>
           {props.data.images.split('[')[1].split(']')[0].split(',').map((e) => {
             if (e !== null && e !== undefined && e !== '') {
               return (
                 <Image
                   source={{ uri: `${e}` }}
-                  style={{ width: 330, height: 250, marginHorizontal: 15, marginBottom: 15 }}
+                  style={{ width: 100, height: 100, marginBottom: 13, marginRight: 13, borderRadius: 10, }}
                 />
               )
-            } else {
-              return <Text style={{ fontSize: 30, color: 'red', marginTop: 35, paddingLeft: 30 }}>No Images Uploaded</Text>
             }
           })}
         </View>
+        <TouchableOpacity style={styles.addLeadBtn} onPress={()=>navigation.navigate('Dashboard')}>
+          <Text style={styles.btnText}>
+          <Icon name="home" size={14} color="#FFFFFF"  style={{marginRight:10}} /> Go To Dashboard
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   )
@@ -51,14 +72,7 @@ const ViewDetails = (props) => {
 export default ViewDetails
 
 const styles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "flex-start",
-    marginTop: 55
-  },
   modalView: {
-    // margin: 20,
     backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
@@ -74,9 +88,37 @@ const styles = StyleSheet.create({
   },
   modalText: {
     marginBottom: 15,
-    marginHorizontal: 12,
-    fontSize: 18,
+    fontSize: 16,
+    color: '#000000',
     fontWeight: 'bold',
-  }
+  },
+
+  modalSubText: {
+    fontSize: 16,
+    color: '#000000'
+  },
+
+  mainHeading: {
+    fontSize: 24,
+    color: '#000000',
+    paddingVertical: 20,
+  },
+  btnText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+  },
+  addLeadBtn: {
+    borderWidth: 0,
+    width: 150,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: '#058cb2',
+    backgroundColor: "#058cb2",
+    borderRadius: 5,
+    marginTop:20,
+    alignSelf:'center',
+  },
+
 
 })

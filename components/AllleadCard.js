@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Modal, Pressable, FlatList, StatusBar, } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
+import Icons from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 // import CheckBox from '@react-native-community/checkbox';
 import ViewDetails from './ViewDetails';
@@ -107,57 +108,28 @@ const AllleadCard = (props) => {
   }
 
   return (
-    <ScrollView key={render} style={{marginBottom:20}}>
+    <ScrollView key={render} style={{ marginTop: 15 }}>
       <FlatList
         data={data}
         renderItem={(item, index) => {
           return (
-            <>
-              <View View style={styles.topContainer}>
-                <View style={{ flexDirection: 'row', marginBottom: -20, }}>
-                  <Checkbox
-                    status={item.item.isChecked ? 'checked' : 'unchecked'}
-                    // status={clearMark === true ? 'unchecked' : item.item.isChecked ? 'checked' : 'unchecked'}
-                    onPress={() => {
-                      setMarkItem(!markItem);
-                      handleCheckboxItem(item.item._id)
-                    }}
-                  />
-
+            <View style={styles.leadsContainer}>
+              <View style={styles.leadsContainer1}>
+                <Checkbox
+                  status={item.item.isChecked ? 'checked' : 'unchecked'}
+                  // status={clearMark === true ? 'unchecked' : item.item.isChecked ? 'checked' : 'unchecked'}
+                  onPress={() => {
+                    setMarkItem(!markItem);
+                    handleCheckboxItem(item.item._id)
+                  }}
+                />
+              </View>
+              <View style={styles.leadsContainer2}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <Text style={styles.nameText}>
-                    {item.item.farmer_name}
+                    {item.item.farmerName}
                   </Text>
-                </View>
-                <View style={styles.buttonContainer}>
-                  {item.item.isPresent === false ?
-                    <>
-                      <TouchableOpacity
-                        onPress={() => handleMarkPresent(item)}
-                        style={styles.Iconchecked}>
-                        <Icon
-                          name="check"
-                          size={14}
-                          color="#fff"
-                          style={styles.icon}
-                        />
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        // onPress={() => handleMarkAbsent(item)}
-                        style={{
-                          height: 16,
-                          width: 16,
-                          backgroundColor: '#ff0000',
-                          marginLeft: 12,
-                        }}>
-                        <AntDesign
-                          name="close"
-                          size={14}
-                          color="#fff"
-                          style={styles.icon}
-                        />
-                      </TouchableOpacity>
-                    </>
-                    :
+                  {item.item.isPresent === true ?
                     <TouchableOpacity
                       // onPress={() => handleMarkPresent(item)}
                       style={styles.Iconchecked}>
@@ -168,28 +140,59 @@ const AllleadCard = (props) => {
                         style={styles.icon}
                       />
                     </TouchableOpacity>
-                  }
+                    : null}
                 </View>
-              </View>
-              <View style={{ marginLeft: 45 }}>
+
                 <Text
                   style={styles.phoneText}>
-                  {item.item.farmer_contact}
+                  {item.item.farmerContact}
                 </Text>
-                <View style={styles.flex_1_center}>
-                  <Text style={styles.companyText}>
-                    {item.item.camp_name}
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => handleViewDetails(item.item)}
-                  >
-                    <Text style={styles.viewDetail}>
-                      {'View details'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                <Text style={styles.companyText}>
+                  {item.item.campName}
+                </Text>
               </View>
-              <View style={{ flex: 1 }}>
+              <View style={styles.leadsContainer3}>
+                {item.item.isPresent === false ?
+
+                  <View style={{ flexDirection: 'row' }}>
+                    <TouchableOpacity
+                      onPress={() => handleMarkPresent(item)}
+                      style={styles.Iconchecked}>
+                      <Icon
+                        name="check"
+                        size={14}
+                        color="#fff"
+                        style={styles.icon}
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      // onPress={() => handleMarkAbsent(item)}
+                      style={{
+                        height: 16,
+                        width: 16,
+                        backgroundColor: '#ff0000',
+                        marginLeft: 12,
+                      }}>
+                      <AntDesign
+                        name="close"
+                        size={14}
+                        color="#fff"
+                        style={styles.icon}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  :
+                  null
+                }
+                <TouchableOpacity
+                  onPress={() => handleViewDetails(item.item)}
+                  style={{ backgroundColor: '#058cb2', display: 'flex', flexDirection: 'row', width: 100, alignItems: 'center', justifyContent: 'space-between', height: 25, marginTop: 10, paddingHorizontal: 10, borderRadius: 5, }}
+                >
+                  <Text style={styles.viewDetail}>
+                    {'View details'}
+                  </Text>
+                  <Icons name="angle-right" size={14} color="#ffffff" />
+                </TouchableOpacity>
                 <Modal
                   animationType="none"
                   transparent={false}
@@ -198,10 +201,10 @@ const AllleadCard = (props) => {
                     setShowModal(!showModal);
                   }}
                 >
-                  <ViewDetails data={userData} />
+                  <ViewDetails data={userData}  goBack={() => { setShowModal(!showModal);}} />
                 </Modal>
               </View>
-            </>
+            </View>
           )
         }}
         keyExtractor={item => item._id}
@@ -215,12 +218,42 @@ export default AllleadCard;
 const styles = StyleSheet.create({
   topContainer: {
     flexDirection: 'row',
-    marginTop: 20,
-    marginLeft: 20,
+    marginTop: 10,
+    marginLeft: 10,
     marginRight: 25,
     marginBottom: 7,
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
+
+  leadsContainer: {
+    backgroundColor: '#f4f4f4',
+    marginBottom: 10,
+    marginLeft: 10,
+    marginRight: 10,
+    borderRadius: 10,
+    paddingHorizontal: 0,
+    paddingVertical: 5,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+
+  },
+
+  leadsContainer1: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+
+  leadsContainer2: {
+    flex: 4,
+  },
+
+  leadsContainer3: {
+    flex: 3,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
   checkBox: {
     width: 20,
     height: 20,
@@ -228,8 +261,9 @@ const styles = StyleSheet.create({
   },
   nameText: {
     fontSize: 14,
-    marginLeft: 2,
-    color: '#000'
+    color: '#000',
+    lineHeight: 24,
+    paddingRight: 10,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -250,9 +284,8 @@ const styles = StyleSheet.create({
   },
   phoneText: {
     fontSize: 14,
-    marginLeft: 10,
     color: '#000',
-    marginBottom: 7,
+    lineHeight: 24,
   },
   flex_1_center: {
     flexDirection: 'row',
@@ -260,13 +293,12 @@ const styles = StyleSheet.create({
   },
   companyText: {
     fontSize: 14,
-    marginLeft: 10,
-    color: '#000'
+    color: '#000',
+    lineHeight: 24,
   },
   viewDetail: {
-    fontSize: 14,
-    marginRight: 35,
-    color: '#2E4CFF'
+    fontSize: 12,
+    color: '#ffffff',
   },
   centeredView: {
     flex: 1,

@@ -6,10 +6,14 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  StatusBar,
+  Alert,
+  BackHandler
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -23,6 +27,29 @@ const Login = props => {
     getCattleType();
     getCattleBreed();
   }, []);
+
+  const backAction = () => {
+    Alert.alert("Field Agent App!", "Are you sure you want to Exit?", [
+      {
+        text: "Cancel",
+        onPress: () => null,
+        style: "cancel"
+      },
+      { text: "YES", onPress: () => BackHandler.exitApp() }
+    ]);
+    return true;
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+     
+
+      BackHandler.addEventListener('hardwareBackPress', backAction);
+
+      return () =>
+        BackHandler.removeEventListener('hardwareBackPress', backAction);
+    }, [])
+  );
 
   const getCattleBreed = async () => {
     let cattleBreed = [];
@@ -103,6 +130,7 @@ const Login = props => {
 
   return (
     <View style={styles.mainContainer}>
+      <StatusBar hidden />
       <View style={{height: windowHeight}}>
         <View style={styles.loginUpSec}>
           <Image
@@ -115,7 +143,7 @@ const Login = props => {
           <View style={styles.loginFormGroup}>
             <Text style={styles.loginText}>Login</Text>
             <Text style={styles.loginTitle}>
-              To login please enter your username and password
+              Please enter your username and password
             </Text>
 
             <TextInput
@@ -127,6 +155,7 @@ const Login = props => {
 
             <TextInput
               style={styles.passwordInputstyle}
+              secureTextEntry={true}
               placeholder="Password"
               value={password}
               onChangeText={e => setPassword(e)}
@@ -169,9 +198,9 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     elevation: 10,
-    padding: 10,
-    paddingTop: 20,
-    paddingBottom: 40,
+    paddingLeft:20,
+    paddingRight:20,
+    paddingTop:20,
     position: 'absolute',
     bottom: 0,
     flex: 1,
@@ -179,8 +208,8 @@ const styles = StyleSheet.create({
   },
   loginFormGroup: {
     flex: 1,
-    paddingLeft: 20,
-    paddingRight: 20,
+    paddingLeft: 0,
+    paddingRight: 0,
   },
   loginText: {
     fontSize: 20,
@@ -189,45 +218,48 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   loginTitle: {
-    fontSize: 14,
+    fontSize: 15,
     marginTop: 20,
     marginHorizontal: 5,
     color: '#000000',
+    textAlign:'center'
   },
   usernameTextInputstyle: {
     borderWidth: 1,
     borderColor: '#F4F4F4',
-    height: 40,
-    width: 322,
+    height: 50,
+    width: '100%',
     paddingBottom: 7,
     fontSize: 14,
     marginTop: 26,
-    marginHorizontal: 5,
     paddingLeft: 20,
+    borderRadius:10,
   },
   passwordInputstyle: {
     borderWidth: 1,
     borderColor: '#F4F4F4',
-    height: 40,
-    width: 322,
+    height: 50,
+    width: '100%',
     paddingBottom: 7,
     fontSize: 14,
     marginTop: 20,
-    marginHorizontal: 5,
     paddingLeft: 20,
+    borderRadius:10,
   },
   submitButtonContainer: {
     alignItems: 'center',
     marginTop: 30,
-    marginBottom: 35,
+    marginBottom: 30,
   },
   submitButtonStyle: {
-    borderColor: '#2E4CFF',
-    borderWidth: 1,
-    backgroundColor: '#2E4CFF',
-    width: 120,
-    borderRadius: 8,
-    paddingVertical: 6,
+    borderColor: '#058cb2',
+    borderWidth: 0,
+    backgroundColor: '#058cb2',
+    width: 130,
+    height:40,
+    borderRadius: 10,
+    paddingTop:8,
+    marginBottom:10,
   },
   submitButtonTextStyle: {
     color: '#fff',
