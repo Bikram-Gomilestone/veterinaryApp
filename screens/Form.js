@@ -16,8 +16,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 import axios from 'axios';
-import { EventRegister } from 'react-native-event-listeners';
-
+import {EventRegister} from 'react-native-event-listeners';
 
 import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -80,7 +79,6 @@ const Form = props => {
     getCattleType();
     getCattleBreed();
     getCampName();
- 
     // checkData();
   }, []);
 
@@ -95,16 +93,17 @@ const Form = props => {
   //     farmerData,
   //     "let farmerData = await AsyncStorage.getItem('FarmerData');",
   //   );
-    
+
   // };
   useEffect(() => {
-     EventRegister.addEventListener('FarmerInfoData', () => {alert('call')});
-     return () => {
+    let listener = EventRegister.addEventListener('Farmer', () =>
+      console.log('called'),
+    );
+    return () => {
       // unsubscribe event
-      EventRegister.removeEventListener("FarmerInfoData");
+      EventRegister.removeEventListener(listener);
     };
-  }, [])
-  
+  }, []);
 
   useEffect(() => {
     setInterval(() => {
@@ -220,7 +219,6 @@ const Form = props => {
       });
   };
 
-
   const getImageURL = async (payload, uid, farmerinfo) => {
     let apiRequest = await axios.post(
       'http://206.189.129.191/backend/api/v1/uploadImage',
@@ -273,12 +271,11 @@ const Form = props => {
   };
 
   const sendPendingImageData = async () => {
-    
     let promiseArray = [];
     let PendingImages = await AsyncStorage.getItem('pendingImage');
     let farmerData = await AsyncStorage.getItem('FarmerData');
-     console.log(JSON.parse(PendingImages), 'PendingImages');
-     console.log(JSON.parse(farmerData), 'farmerData');
+    console.log(JSON.parse(PendingImages), 'PendingImages');
+    console.log(JSON.parse(farmerData), 'farmerData');
     if (
       PendingImages !== null &&
       PendingImages !== undefined &&
@@ -371,17 +368,17 @@ const Form = props => {
         .then(res => {
           if (res !== null) {
             // console.log("response",res);
-            if(payload.length > 0){
-            console.log(payload, 'after');
-            AsyncStorage.removeItem('FarmerData', () => {
-              FarmerInfoData=[];
-            });
-            AsyncStorage.removeItem('pendingImage', () => {
-              alert('Pending Data Send');
-            });
-            setIsUploading(false);
+            if (payload.length > 0) {
+              console.log(payload, 'after');
+              AsyncStorage.removeItem('FarmerData', () => {
+                FarmerInfoData = [];
+              });
+              AsyncStorage.removeItem('pendingImage', () => {
+                alert('Pending Data Send');
+              });
+              setIsUploading(false);
+            }
           }
-        }
         })
         .catch(err => {
           console.log(err);
@@ -611,7 +608,7 @@ const Form = props => {
           setSelectCattleBreed(null);
           setUploadImageUrl([]);
           setFormuid(Math.random());
-
+          FarmerInfoData = [];
           // console.log(response);
         })
         .catch(function (error) {
@@ -621,243 +618,259 @@ const Form = props => {
   };
 
   return (
-    <View style={{ backgroundColor: '#ffffff', flex: 1 }}>
+    <View style={{backgroundColor: '#ffffff', flex: 1}}>
       <StatusBar hidden />
       {/* {console.log(farmerPendingInfo,"farmerPendingInfo")}
       {console.log(offlineImages,"pandingImageUrl")} */}
-      <Header addBtn={false} hide={true} goBack={() => { props.navigation.goBack() }} />
-      <ScrollView showsVerticalScrollIndicator={false} style={{paddingTop:20}} >
-      <View style={{marginLeft: 10,marginRight:10}}>
-        <Text style={{fontSize: 18, color: '#000000', marginBottom: 20}}>
-          Please enter all information of farmer
-        </Text>
-        <TextInput
-          style={styles.textInputBox}
-          placeholder={'Enter name'}
-          placeholderTextColor="#000000"
-          value={name}
-          onChangeText={name => {
-            setName(name);
-          }}
-        />
-        <TextInput
-          style={styles.textInputBox}
-          keyboardType={'number-pad'}
-          placeholder={'Mobile number'}
-          placeholderTextColor="#000000"
-          maxLength={10}
-          value={mobileNumber}
-          onChangeText={mobileNumber => {
-            setMobileNumber(mobileNumber);
-          }}
-        />
-        {netAvailable ? (
-          <FormDropDown
-            label={'Cattle type'}
-            buttonTextStyle={styles.placeholderStyle}
-            data={cattleType}
-            selectedValue={selectCattleType}
-            onValueChange={(e, i) => setSelectCattleType(e)}
-          />
-        ) : (
-          <FormDropDown
-            label={'Cattle type'}
-            buttonTextStyle={styles.placeholderStyle}
-            data={localCattleChoice}
-            selectedValue={selectCattleType}
-            onValueChange={(e, i) => setSelectCattleType(e)}
-          />
-        )}
-        {netAvailable ? (
-          <FormDropDown
-            data={cattleBreed}
-            buttonTextStyle={styles.placeholderStyle}
-            label={'Cattle breed'}
-            selectedValue={selectCattleBreed}
-            onValueChange={(e, i) => setSelectCattleBreed(e)}
-          />
-        ) : (
-          <FormDropDown
-            data={localBreedChoice}
-            buttonTextStyle={styles.placeholderStyle}
-            label={'Cattle breed'}
-            selectedValue={selectCattleBreed}
-            onValueChange={(e, i) => setSelectCattleBreed(e)}
-          />
-        )}
-        {netAvailable ? (
-          <FormDropDown
-            data={campName}
-            buttonTextStyle={
-              selectedCampName !== null
-                ? styles.campNamePlaceholderStyle
-                : styles.placeholderStyle
-            }
-            label={'Camp name'}
-            selectedValue={selectedCampName}
-            onValueChange={(e, i) => {
-              setSelectedCampName(e);
-            }}
-          />
-        ) : (
-          <FormDropDown
-            data={localCampChoice}
-            buttonTextStyle={
-              selectedCampName !== null
-                ? styles.campNamePlaceholderStyle
-                : styles.placeholderStyle
-            }
-            label={'Camp name'}
-            selectedValue={selectedCampName}
-            onValueChange={(e, i) => {
-              setSelectedCampName(e);
-            }}
-          />
-        )}
-      </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          marginLeft: 10,
-          marginRight:10,
-          marginTop: 25,
-        }}>
-        <Text style={{fontSize: 14, color: '#058cb2', fontWeight: 'bold',paddingTop:5}}>
-          Upload images
-        </Text>
-        <TouchableOpacity
-          style={styles.addLeadBtn}
-          onPress={() => {
-            launchCamera();
-          }}>
-          <Text style={styles.btnText}>
-            <Icon name="plus" size={14} color="#058cb2" /> Add image
+      <Header
+        addBtn={false}
+        hide={true}
+        goBack={() => {
+          props.navigation.goBack();
+        }}
+      />
+      <ScrollView showsVerticalScrollIndicator={false} style={{paddingTop: 20}}>
+        <View style={{marginLeft: 10, marginRight: 10}}>
+          <Text style={{fontSize: 18, color: '#000000', marginBottom: 20}}>
+            Please enter all information of farmer
           </Text>
-        </TouchableOpacity>
-      </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'flex-start',
-          flexWrap: 'wrap',
-        }}>
-        {network
-          ? uploadImageUrl !== undefined &&
-            uploadImageUrl.map((e, i) => {
-              // console.log('==============>>>>', e);
-              return (
-                <>
-                  <View
-                    style={{
-                      width: 106,
-                      height: 76,
-                      marginTop: 24,
-                      marginLeft: 10,
-                      marginBottom:20,
-                    }}>
-                    <View style={{position: 'relative'}}>
-                      <TouchableOpacity
-                        style={{
-                          alignItems: 'flex-end',
-                          top: 10,
-                          left: 5,
-                          zIndex: 2222,
-                        }}
-                        onPress={() => deleteImage(e)}>
-                        <Text
-                          style={{
-                            position: 'relative',
-                            textAlign: 'right',
-                            backgroundColor: 'red',
-                            width: 16,
-                            height: 16,
-                            borderRadius: 8,
-                            padding: 1,
-                            alignItems: 'center',
-                          }}>
-                          <AntDesign
-                            name="close"
-                            size={14}
-                            color="#ffffff"
-                            style={styles.icon}
-                          />
-                        </Text>
-                      </TouchableOpacity>
-
-                      <Image
-                        source={{uri: e}}
-                        //source={{uri: 'http://206.189.129.191/images/rn_image_picker_lib_temp_9ea27a20-c7b7-46aa-b7db-ed7cf4c382d9.jpg.jpeg'}}
-                        style={{width: '100%', height: '100%',borderRadius:10,}}
-                      />
-                    </View>
-                  </View>
-                </>
-              );
-            })
-          : offlineImages !== undefined &&
-            offlineImages !== null &&
-            offlineImages !== undefined &&
-            offlineImages.length > 0 &&
-            offlineImages.map((e, i) => {
-              return (
-                <>
-                  <View
-                    style={{
-                      width: 108,
-                      height: 76,
-                      marginTop: 24,
-                      marginLeft: 20,
-                    }}>
-                    <View style={{position: 'relative'}}>
-                      <TouchableOpacity
-                        style={{
-                          alignItems: 'flex-end',
-                          top: 10,
-                          left: 5,
-                          zIndex: 2222,
-                        }}
-                        onPress={() => deleteImage(e)}>
-                        <Text
-                          style={{
-                            position: 'relative',
-                            textAlign: 'right',
-                            backgroundColor: 'red',
-                            width: 16,
-                            height: 16,
-                            borderRadius: 8,
-                            padding: 1,
-                            alignItems: 'center',
-                          }}>
-                          <AntDesign
-                            name="close"
-                            size={14}
-                            color="black"
-                            style={styles.icon}
-                          />
-                        </Text>
-                      </TouchableOpacity>
-
-                      <Image
-                        source={{uri: `data:image/jpeg;base64,${e.base64}`}}
-                        style={{width: '100%', height: '100%'}}
-                      />
-                    </View>
-                  </View>
-                </>
-              );
-            })}
-      </View>
-      <View style={{alignItems: 'center',marginBottom:150,marginTop:40,}}>
-        <TouchableOpacity
-          style={styles.submitBtn}
-          onPress={() => {
-            handleSubmitButton();
+          <TextInput
+            style={styles.textInputBox}
+            placeholder={'Enter name'}
+            placeholderTextColor="#000000"
+            value={name}
+            onChangeText={name => {
+              setName(name);
+            }}
+          />
+          <TextInput
+            style={styles.textInputBox}
+            keyboardType={'number-pad'}
+            placeholder={'Mobile number'}
+            placeholderTextColor="#000000"
+            maxLength={10}
+            value={mobileNumber}
+            onChangeText={mobileNumber => {
+              setMobileNumber(mobileNumber);
+            }}
+          />
+          {netAvailable ? (
+            <FormDropDown
+              label={'Cattle type'}
+              buttonTextStyle={styles.placeholderStyle}
+              data={cattleType}
+              selectedValue={selectCattleType}
+              onValueChange={(e, i) => setSelectCattleType(e)}
+            />
+          ) : (
+            <FormDropDown
+              label={'Cattle type'}
+              buttonTextStyle={styles.placeholderStyle}
+              data={localCattleChoice}
+              selectedValue={selectCattleType}
+              onValueChange={(e, i) => setSelectCattleType(e)}
+            />
+          )}
+          {netAvailable ? (
+            <FormDropDown
+              data={cattleBreed}
+              buttonTextStyle={styles.placeholderStyle}
+              label={'Cattle breed'}
+              selectedValue={selectCattleBreed}
+              onValueChange={(e, i) => setSelectCattleBreed(e)}
+            />
+          ) : (
+            <FormDropDown
+              data={localBreedChoice}
+              buttonTextStyle={styles.placeholderStyle}
+              label={'Cattle breed'}
+              selectedValue={selectCattleBreed}
+              onValueChange={(e, i) => setSelectCattleBreed(e)}
+            />
+          )}
+          {netAvailable ? (
+            <FormDropDown
+              data={campName}
+              buttonTextStyle={
+                selectedCampName !== null
+                  ? styles.campNamePlaceholderStyle
+                  : styles.placeholderStyle
+              }
+              label={'Camp name'}
+              selectedValue={selectedCampName}
+              onValueChange={(e, i) => {
+                setSelectedCampName(e);
+              }}
+            />
+          ) : (
+            <FormDropDown
+              data={localCampChoice}
+              buttonTextStyle={
+                selectedCampName !== null
+                  ? styles.campNamePlaceholderStyle
+                  : styles.placeholderStyle
+              }
+              label={'Camp name'}
+              selectedValue={selectedCampName}
+              onValueChange={(e, i) => {
+                setSelectedCampName(e);
+              }}
+            />
+          )}
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginLeft: 10,
+            marginRight: 10,
+            marginTop: 25,
           }}>
-          <Text style={styles.submitBtnText}>Submit</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+          <Text
+            style={{
+              fontSize: 14,
+              color: '#058cb2',
+              fontWeight: 'bold',
+              paddingTop: 5,
+            }}>
+            Upload images
+          </Text>
+          <TouchableOpacity
+            style={styles.addLeadBtn}
+            onPress={() => {
+              launchCamera();
+            }}>
+            <Text style={styles.btnText}>
+              <Icon name="plus" size={14} color="#058cb2" /> Add image
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'flex-start',
+            flexWrap: 'wrap',
+          }}>
+          {network
+            ? uploadImageUrl !== undefined &&
+              uploadImageUrl.map((e, i) => {
+                // console.log('==============>>>>', e);
+                return (
+                  <>
+                    <View
+                      style={{
+                        width: 106,
+                        height: 76,
+                        marginTop: 24,
+                        marginLeft: 10,
+                        marginBottom: 20,
+                      }}>
+                      <View style={{position: 'relative'}}>
+                        <TouchableOpacity
+                          style={{
+                            alignItems: 'flex-end',
+                            top: 10,
+                            left: 5,
+                            zIndex: 2222,
+                          }}
+                          onPress={() => deleteImage(e)}>
+                          <Text
+                            style={{
+                              position: 'relative',
+                              textAlign: 'right',
+                              backgroundColor: 'red',
+                              width: 16,
+                              height: 16,
+                              borderRadius: 8,
+                              padding: 1,
+                              alignItems: 'center',
+                            }}>
+                            <AntDesign
+                              name="close"
+                              size={14}
+                              color="#ffffff"
+                              style={styles.icon}
+                            />
+                          </Text>
+                        </TouchableOpacity>
+
+                        <Image
+                          source={{uri: e}}
+                          //source={{uri: 'http://206.189.129.191/images/rn_image_picker_lib_temp_9ea27a20-c7b7-46aa-b7db-ed7cf4c382d9.jpg.jpeg'}}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            borderRadius: 10,
+                          }}
+                        />
+                      </View>
+                    </View>
+                  </>
+                );
+              })
+            : offlineImages !== undefined &&
+              offlineImages !== null &&
+              offlineImages !== undefined &&
+              offlineImages.length > 0 &&
+              offlineImages.map((e, i) => {
+                return (
+                  <>
+                    <View
+                      style={{
+                        width: 108,
+                        height: 76,
+                        marginTop: 24,
+                        marginLeft: 20,
+                      }}>
+                      <View style={{position: 'relative'}}>
+                        <TouchableOpacity
+                          style={{
+                            alignItems: 'flex-end',
+                            top: 10,
+                            left: 5,
+                            zIndex: 2222,
+                          }}
+                          onPress={() => deleteImage(e)}>
+                          <Text
+                            style={{
+                              position: 'relative',
+                              textAlign: 'right',
+                              backgroundColor: 'red',
+                              width: 16,
+                              height: 16,
+                              borderRadius: 8,
+                              padding: 1,
+                              alignItems: 'center',
+                            }}>
+                            <AntDesign
+                              name="close"
+                              size={14}
+                              color="black"
+                              style={styles.icon}
+                            />
+                          </Text>
+                        </TouchableOpacity>
+
+                        <Image
+                          source={{uri: `data:image/jpeg;base64,${e.base64}`}}
+                          style={{width: '100%', height: '100%'}}
+                        />
+                      </View>
+                    </View>
+                  </>
+                );
+              })}
+        </View>
+        <View style={{alignItems: 'center', marginBottom: 150, marginTop: 40}}>
+          <TouchableOpacity
+            style={styles.submitBtn}
+            onPress={() => {
+              handleSubmitButton();
+            }}>
+            <Text style={styles.submitBtnText}>Submit</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -875,7 +888,7 @@ const styles = StyleSheet.create({
     paddingLeft: 22,
     paddingVertical: 4,
     marginBottom: 12,
-    borderRadius:10,
+    borderRadius: 10,
   },
   addLeadBtn: {
     borderWidth: 1,
@@ -910,7 +923,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     color: '#000000',
     left: 110,
-    borderRadius:10,
+    borderRadius: 10,
   },
   campNamePlaceholderStyle: {
     fontSize: 14,
@@ -925,5 +938,4 @@ const styles = StyleSheet.create({
     top: 2,
     zIndex: 999,
   },
- 
 });
