@@ -148,7 +148,7 @@ const Form = props => {
     axios
       .get('https://www.google.com/')
       .then(function (response) {
-        console.log('response');
+        // console.log('response');
         // handle success
         setStatus(true);
         setNetAvailable(true);

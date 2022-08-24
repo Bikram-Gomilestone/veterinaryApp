@@ -8,6 +8,7 @@ import SplashScreen from './screens/SplashScreen';
 import Form from './screens/Form';
 import AllLead from './screens/AllLead';
 import BottomMenu from './screens/BottomMenu';
+import ViewDetails from './screens/ViewDetails';
 // import AllLead from './screens/AllLead'
 // import Form from './screens/Form'
 
@@ -15,7 +16,7 @@ const App = () => {
   const Stack = createNativeStackNavigator();
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Navigator screenOptions={{headerShown: false}} >
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen
@@ -23,6 +24,8 @@ const App = () => {
           component={BottomMenu}
           page="Dashboard"
         />
+        <Stack.Screen name="ViewDetails" component={ViewDetails} />
+        {/* <Stack.Screen name="Dashboard" component={Dashboard} /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

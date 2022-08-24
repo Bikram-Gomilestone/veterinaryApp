@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import Icons from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 // import CheckBox from '@react-native-community/checkbox';
-import ViewDetails from './ViewDetails';
+import ViewDetails from '../screens/ViewDetails';
 import { Checkbox } from 'react-native-paper';
 import axios from 'axios';
 
@@ -34,6 +34,7 @@ const AllleadCard = (props) => {
 
 
   useEffect(() => {
+    // {console.log("props.data =====>",props.data.farmers);}
     setData(props.data)
     setClearMark(props.clearMark)
     setTimeout(() => {
@@ -55,32 +56,19 @@ const AllleadCard = (props) => {
   }
 
   const handleMarkPresent = async (item) => {
-    // let newData = data
-    // newData.map((e) => {
-    //   if (e._id === item.item._id) {
-    //     e.isPresent = true
-    //   }
-    // })
-    // setData([])
-    // setRender(Math.random())
-    // setData(newData)
+    let attData = {
+      "farmerId": `${item.item.farmer._id}`,
+      "campId": `${item.item.camp._id}`
+    }
     let payload = {
-      "farmer": [`${item.item._id}`]
+      "farmer": [attData]
     }
     await axios
       .post('http://206.189.129.191/backend/api/v1/attendance', payload)
       .then(function (response) {
         let result = response.data.meta.message;
         alert(result)
-        let newData = data
-        newData.map((e) => {
-          if (e._id === item.item._id) {
-            e.isPresent = true
-          }
-        })
-        setData([])
-        setRender(Math.random())
-        setData(newData)
+        props.getData()
       })
       .catch(function (error) {
         console.log('Error ===> ', error);
@@ -127,7 +115,7 @@ const AllleadCard = (props) => {
               <View style={styles.leadsContainer2}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <Text style={styles.nameText}>
-                    {item.item.farmerName}
+                    {item.item.farmer.farmerName}
                   </Text>
                   {item.item.isPresent === true ?
                     <TouchableOpacity
@@ -145,10 +133,10 @@ const AllleadCard = (props) => {
 
                 <Text
                   style={styles.phoneText}>
-                  {item.item.farmerContact}
+                  {item.item.farmer.farmerContact}
                 </Text>
                 <Text style={styles.companyText}>
-                  {item.item.campName}
+                  {item.item.camp.campName}
                 </Text>
               </View>
               <View style={styles.leadsContainer3}>
@@ -185,7 +173,8 @@ const AllleadCard = (props) => {
                   null
                 }
                 <TouchableOpacity
-                  onPress={() => handleViewDetails(item.item)}
+                  onPress={() => props.navigation.navigate('ViewDetails', { data: item.item })}
+                  // onPress={() => alert(JSON.stringify(item.item))}
                   style={{ backgroundColor: '#058cb2', display: 'flex', flexDirection: 'row', width: 100, alignItems: 'center', justifyContent: 'space-between', height: 25, marginTop: 10, paddingHorizontal: 10, borderRadius: 5, }}
                 >
                   <Text style={styles.viewDetail}>
@@ -193,19 +182,20 @@ const AllleadCard = (props) => {
                   </Text>
                   <Icons name="angle-right" size={14} color="#ffffff" />
                 </TouchableOpacity>
-                <Modal
-                  animationType="none"
-                  transparent={false}
-                  visible={showModal}
-                  onRequestClose={() => {
-                    setShowModal(!showModal);
-                  }}
-                >
-                  <ViewDetails data={userData}  goBack={() => { setShowModal(!showModal);}} />
-                </Modal>
+                {/* <Modal
+                    animationType="none"
+                    transparent={false}
+                    visible={showModal}
+                    onRequestClose={() => {
+                      setShowModal(!showModal);
+                    }}
+                  >
+                    <ViewDetails data={userData}  goBack={() => { setShowModal(!showModal);}} />
+                  </Modal> */}
               </View>
             </View>
           )
+
         }}
         keyExtractor={item => item._id}
       />
