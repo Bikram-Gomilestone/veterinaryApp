@@ -20,70 +20,10 @@ import axios from 'axios';
 import FormDropDown from '../components/FormDropDown';
 
 
-const Data = [{
-  name: "Rahul Sagar",
-  phoneNumber: "9501736242",
-  companyName: "VET camp-Singhpura"
-},
-{
-  name: "Sid",
-  phoneNumber: "1234567890",
-  companyName: "VET camp-Singhpura"
-},
-{
-  name: "Bikram",
-  phoneNumber: "9501736242",
-  companyName: "VET camp-Singhpura"
-},
-{
-  name: "Manish",
-  phoneNumber: "9501736242",
-  companyName: "VET camp-Singhpura"
-},
-{
-  name: "Rahul Sagar",
-  phoneNumber: "9501736242",
-  companyName: "VET camp-Singhpura"
-},
-{
-  name: "Sid",
-  phoneNumber: "9501736242",
-  companyName: "VET camp-Singhpura"
-},
-{
-  name: "Rahul Sagar",
-  phoneNumber: "9501736242",
-  companyName: "VET camp-Singhpura"
-},
-{
-  name: "Sid",
-  phoneNumber: "9501736242",
-  companyName: "VET camp-Singhpura"
-},
-{
-  name: "Bikram",
-  phoneNumber: "9501736242",
-  companyName: "VET camp-Singhpura"
-},
-{
-  name: "Manish",
-  phoneNumber: "9512346567",
-  companyName: "VET camp-Singhpura"
-},
-{
-  name: "Rahul Sagar",
-  phoneNumber: "9501736242",
-  companyName: "VET camp-Singhpura"
-},
-]
-let allData = [];
-
 const MARK_AS = [
   'Present',
   'Absent'
 ]
-
-let arrayOfIds = [];
 
 const AllLead = (props) => {
 
@@ -100,28 +40,29 @@ const AllLead = (props) => {
   useEffect(() => {
     getData();
     getCampName();
+
   }, [])
 
   const getData = async () => {
     let data = []
-    let newData = []
+    // let newData = []
     await axios
       .get('http://206.189.129.191/backend/api/v1/getAllData')
       .then(function (response) {
-        // console.log(JSON.stringify(response.data.data.farmers), "ffadfadf")
+        // console.log(JSON.stringify(response.data), "ffadfadf")
         let result = response.data.data.farmers;
 
         result.forEach(element => {
           element.isChecked = false;
           data.push(element);
         });
-        result.forEach(element => {
-          element.isPresent = false;
-          newData.push(element);
-        });
-        allData.push(data)
+        // result.forEach(element => {
+        //   element.isPresent = false;
+        //   newData.push(element);
+        // });
+        // allData.push(data)
         setData(data);
-        setAllData(newData);
+        setAllData(data);
         // console.log("Data =====> ", data);
 
       })
@@ -136,6 +77,7 @@ const AllLead = (props) => {
     await axios
       .get('http://206.189.129.191/backend/api/v1/camps')
       .then(function (response) {
+        // alert(JSON.stringify(response.data.data.camps[0].campName))
         let result = response.data.data.camps;
         result.forEach(element => {
           campName.push(element.campName);
@@ -155,77 +97,84 @@ const AllLead = (props) => {
       if (isNaN(item)) {
         let Data = Alldata.filter(
           (e) => {
-            if (e.farmerName != null) {
-              return e.farmerName.toLowerCase().includes(item.toLowerCase());
+            if (e.farmer.farmerName != null) {
+              return e.farmer.farmerName.toLowerCase().includes(item.toLowerCase());
             }
           },
         );
-        setAllData(Data);
+        setData(Data);
       } else {
         let Data = Alldata.filter(
           (e) => {
-            if (e.farmerContact != null) {
-              return e.farmerContact.includes(item);
+            if (e.farmer.farmerContact != null) {
+              return e.farmer.farmerContact.includes(item);
             }
           },
         );
-        setAllData(Data);
+        setData(Data);
       }
 
     } else {
-      setAllData(data)
+      setData(Alldata)
 
     }
 
 
   }
   const handleCampNameFilter = (item) => {
-    // let place =item
-    let originalData = data;
+    let originalData = Alldata;
+
     if (item !== '' && item !== undefined) {
       let Data = originalData.filter((e) => {
-        if (e.campName === item) {
+        if (e.camp.campName === item) {
           return e
         }
       })
-      setAllData(Data);
+
+      setData(Data);
       setCampname(item)
 
     } else {
-      setAllData(originalData)
-      setCampname("Filter")
+      setData(originalData)
+      setCampname("ALL")
     }
   }
 
-  // const empty = arr => arr.length = 0;
-
   const handleMarkAs = async (item, markas) => {
-
-    if (markas !== undefined) {
-      item.map((e) => {
+    let finalData = [];
+    if (markas !== undefined && markas !== 'Absent') {
+      let attData = item.map((e) => {
         if (e.isChecked === true) {
-          arrayOfIds.push(e._id)
+          return {
+            "farmerId": `${e.farmer._id}`,
+            "campId": `${e.camp._id}`
+          }
+        }
+      })
+
+      for (let i = 0; i < attData.length; i++) {
+        if (attData[i] !== undefined) {
+          finalData.push(attData[i])
+        }
+      }
+    }
+    let payload = {
+      "farmer": finalData
+    }
+    if (payload.farmer.length > 0) {
+      data.map((e) => {
+        if (e.isChecked === true) {
+          e.isChecked = false;
         }
       })
     }
-    let payload = {
-      "farmer": arrayOfIds
-    }
-
-    // setMarkItem(false)
-    // data.map((e) => {
-    //   if (e.isChecked === true) {
-    //     e.isChecked = false;
-    //   }
-    // })
     if (payload.farmer.length > 0) {
       await axios
         .post('http://206.189.129.191/backend/api/v1/attendance', payload)
         .then(function (response) {
           let result = response.data.meta.message;
           alert(result)
-          arrayOfIds = [];
-          // empty(arrayOfIds)
+          getData();
           setIsPresent('')
           setClearMark(true)
         })
@@ -247,82 +196,85 @@ const AllLead = (props) => {
 
 
   return (
-    <View style={{ backgroundColor: '#ffffff', flex: 1 }}>
-      <StatusBar hidden />
-      <Header addBtn={false} hide={true} goBack={() => { props.navigation.navigate('Dashboard') }} />
-      <View style={styles.middleContainer}>
-        <Text style={styles.allLeadText}>
-          All Leads
-        </Text>
-
-        <View style={styles.positionRelative}>
-          <TextInput
-            style={styles.searchTextInput}
-            placeholder="Search"
-            placeholderTextColor={'#000000'}
-            value={name}
-            onChangeText={(value) => {
-              setName(value);
-              handleSearchItem(value);
-            }}
-          />
-          <Icon
-            name="search"
-            size={18}
-            color="#058cb2"
-            style={styles.searchIcon}
-          />
-        </View>
-      </View>
-      <View style={styles.bottomContainer}>
-        <View style={styles.flexRow}>
-          <CheckBox
-            value={markItem}
-            onValueChange={() => {
-
-              setMarkItem((prevState) => !prevState);
-              data.map((e) => {
-                e.isChecked = !markItem;
-              })
-            }
-            }
-            style={styles.checkbox}
-          />
-          <Text style={styles.selectAllText}>
-            All
+    <>
+      <View style={{ backgroundColor: '#ffffff', flex: 1 }}>
+        <StatusBar hidden />
+        <Header addBtn={false} hide={true} goBack={() => { props.navigation.navigate('Dashboard') }} />
+        <View style={styles.middleContainer}>
+          <Text style={styles.allLeadText}>
+            All Leads
           </Text>
+
+          <View style={styles.positionRelative}>
+            <TextInput
+              style={styles.searchTextInput}
+              placeholder="Search"
+              placeholderTextColor={'#000000'}
+              value={name}
+              onChangeText={(value) => {
+                setName(value);
+                handleSearchItem(value);
+              }}
+            />
+            <Icon
+              name="search"
+              size={18}
+              color="#058cb2"
+              style={styles.searchIcon}
+            />
+          </View>
         </View>
-        <View style={styles.dropdownContainer}>
-          <FormDropDown
-            data={campNames}
-            buttonTextStyle={styles.placeholderStyle}
-            label={'Filter'}
-            selectedValue={campname}
-            onValueChange={(e, i) => handleCampNameFilter(e)}
-            clear={true}
-          />
+        <View style={styles.bottomContainer}>
+          <View style={styles.flexRow}>
+            <CheckBox
+              value={markItem}
+              onValueChange={() => {
+
+                setMarkItem((prevState) => !prevState);
+                data.map((e) => {
+                  e.isChecked = !markItem;
+                })
+              }
+              }
+              style={styles.checkbox}
+            />
+            <Text style={styles.selectAllText}>
+              All
+            </Text>
+          </View>
+          <View style={styles.dropdownContainer}>
+            <FormDropDown
+              data={campNames}
+              buttonTextStyle={styles.placeholderStyle}
+              label={'ALL'}
+              selectedValue={campname}
+              onValueChange={(e, i) => handleCampNameFilter(e)}
+              clear={true}
+            />
+          </View>
+          <View style={styles.dropdownContainername}>
+            <FormDropDown
+              data={MARK_AS}
+              buttonTextStyle={styles.placeholderStyle}
+              label={'Mark As'}
+              selectedValue={isPresent}
+              onValueChange={(e, i) => {
+                setIsPresent(e)
+                handleMarkAs(data, e)
+              }}
+            />
+          </View>
         </View>
-        <View style={styles.dropdownContainername}>
-          <FormDropDown
-            data={MARK_AS}
-            buttonTextStyle={styles.placeholderStyle}
-            label={'Mark As'}
-            selectedValue={isPresent}
-            onValueChange={(e, i) => {
-              setIsPresent(e)
-              handleMarkAs(data, e)
-            }}
-          />
-        </View>
+        <AllleadCard
+          // value={markItem}
+          data={data}
+          clearMark={clearMark}
+          handleclicked={(item) => handleMarkAs(item)}
+          navigation={props.navigation}
+          getData={() => getData()}
+        />
       </View>
-      <AllleadCard
-        value={markItem}
-        data={Alldata}
-        clearMark={clearMark}
-        handleclicked={(item) => handleMarkAs(item)}
-        navigation={props.navigation}
-      />
-    </View>
+    </>
   );
 };
 
@@ -361,8 +313,8 @@ const styles = StyleSheet.create({
   middleContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems:'center',
-    paddingTop:20,
+    alignItems: 'center',
+    paddingTop: 20,
 
   },
   allLeadText: {
@@ -410,19 +362,19 @@ const styles = StyleSheet.create({
   dropdownContainer: {
     flex: 2,
     marginRight: 10,
-    height:40,
+    height: 40,
   },
 
   dropdownContainername: {
     flex: 2,
-    height:40,
+    height: 40,
   },
 
   checkbox: {
     width: 20,
     height: 15,
     marginRight: 12,
-    marginLeft:7,
+    marginLeft: 7,
   },
   selectAllText: {
     fontSize: 13,

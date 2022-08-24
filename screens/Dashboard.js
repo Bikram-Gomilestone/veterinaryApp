@@ -9,15 +9,15 @@ import {
   BackHandler,
   Alert,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DashboardCard from '../components/DashboardCard';
 import Header from '../components/Header';
-import {BarChart} from 'react-native-chart-kit';
+import { BarChart } from 'react-native-chart-kit';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useFocusEffect} from '@react-navigation/native';
-import {EventRegister} from 'react-native-event-listeners';
+import { useFocusEffect } from '@react-navigation/native';
+import { EventRegister } from 'react-native-event-listeners';
 import NetInfo from '@react-native-community/netinfo';
 
 const chartConfig = {
@@ -107,8 +107,7 @@ const Dashboard = props => {
       payload,
     );
     let tmp = `http://206.189.129.191/${apiRequest.data.url}`;
-    console.log(tmp);
-    return {url: tmp, payload, uid, farmerinfo};
+    return { url: tmp, payload, uid, farmerinfo };
   };
 
   const handleOfflineImageUpload = async (forms, uid, farmerinfo, payload) => {
@@ -290,7 +289,7 @@ const Dashboard = props => {
         onPress: () => null,
         style: 'cancel',
       },
-      {text: 'YES', onPress: () => BackHandler.exitApp()},
+      { text: 'YES', onPress: () => BackHandler.exitApp() },
     ]);
     return true;
   };
@@ -328,15 +327,15 @@ const Dashboard = props => {
   };
 
   return (
-    <View style={{backgroundColor: '#ffffff', flex: 1}}>
+    <View style={{ backgroundColor: '#ffffff', flex: 1 }}>
       <Header
         addBtn={true}
         onPress={() => {
           props.navigation.navigate('Form', {callApi: getData()});
         }}
       />
-      <ScrollView showsVerticalScrollIndicator={false} style={{paddingTop: 20}}>
-        <View style={{marginHorizontal: 10}}>
+      <ScrollView showsVerticalScrollIndicator={false} style={{ paddingTop: 20 }}>
+        <View style={{ marginHorizontal: 10 }}>
           <Text style={styles.welcomeText}>{`Welcome, ${username} !`}</Text>
           <Text style={styles.lastUpdatedText}>
             Last updated: 5 Aug, 1:12PM
@@ -359,7 +358,7 @@ const Dashboard = props => {
           />
           <DashboardCard title={'Camp attended'} value={'80+'} />
         </View>
-        <View style={{marginHorizontal: 10, marginTop: 30}}>
+        <View style={{ marginHorizontal: 10, marginTop: 30 }}>
           <Text style={styles.recentlyAddedHeading}>Recent leads added</Text>
           <TouchableOpacity
             style={styles.recentlyAddedTextContainer}
@@ -372,7 +371,7 @@ const Dashboard = props => {
             </View>
           </TouchableOpacity>
         </View>
-        <View style={{marginHorizontal: 10, marginTop: 20}}>
+        <View style={{ marginHorizontal: 10, marginTop: 20 }}>
           <Text style={styles.recentlyAddedHeading}>Recent Report</Text>
           <BarChart
             data={{

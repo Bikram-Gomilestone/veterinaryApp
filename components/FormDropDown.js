@@ -6,45 +6,71 @@ import { Picker } from '@react-native-picker/picker';
 const FormDropDown = props => {
   return (
     <View style={styles.dropDownContainer}>
+      {props.label === 'ALL' ?
+        <Picker
+          key={Math.random()}
+          style={styles.dropdownStyle}
+          prompt={props.prompt}
+          selectedValue={props.selectedValue}
+          onValueChange={props.onValueChange}>
+          <Picker.Item label={props.label} />
+          {props.data.map(e => (
+            <Picker.Item label={e} value={e} />
+          ))}
+        </Picker>
+        : null}
+      {props.label === 'Mark As' ?
+        <Picker
+          key={Math.random()}
+          style={styles.dropdownStyle}
+          prompt={props.prompt}
+          selectedValue={props.selectedValue}
+          onValueChange={props.onValueChange}>
+          <Picker.Item label={props.label} />
+          {props.data.map(e => (
+            <Picker.Item label={e} value={e} />
+          ))}
+        </Picker>
+        : null}
       {props.label === 'Cattle type' ?
-      <Picker
-        key={Math.random()}
-        style={styles.dropdownStyle}
-        prompt={props.prompt}
-        selectedValue={props.selectedValue}
-        onValueChange={props.onValueChange}>
-        <Picker.Item label={props.label} value={1} />
-        {props.data.map(e => (
-          <Picker.Item label={e.categoryName} value={e} />
-        ))}
-      </Picker>
-      :null}
+        <Picker
+          key={Math.random()}
+          style={styles.dropdownStyle}
+          prompt={props.prompt}
+          selectedValue={props.selectedValue}
+          onValueChange={props.onValueChange}>
+          <Picker.Item label={props.label} />
+          {props.data.map(e => (
+            <Picker.Item label={e.categoryName} value={e} />
+          ))}
+        </Picker>
+        : null}
       {props.label === 'Cattle breed' ?
-      <Picker
-        key={Math.random()}
-        style={styles.dropdownStyle}
-        prompt={props.prompt}
-        selectedValue={props.selectedValue}
-        onValueChange={props.onValueChange}>
-        <Picker.Item label={props.label} value={2}/>
-        {props.data.map(e => (
-          <Picker.Item label={e.typeName} value={e} />
-        ))}
-      </Picker>
-      :null}
+        <Picker
+          key={Math.random()}
+          style={styles.dropdownStyle}
+          prompt={props.prompt}
+          selectedValue={props.selectedValue}
+          onValueChange={props.onValueChange}>
+          <Picker.Item label={props.label} />
+          {props.data.map(e => (
+            <Picker.Item label={e.typeName} value={e} />
+          ))}
+        </Picker>
+        : null}
       {props.label === 'Camp name' ?
-      <Picker
-        key={Math.random()}
-        style={styles.dropdownStyle}
-        prompt={props.prompt}
-        selectedValue={props.selectedValue}
-        onValueChange={props.onValueChange}>
-        <Picker.Item label={props.label} value={3} />
-        {props.data.map(e => (
-          <Picker.Item label={e.campName} value={e} />
-        ))}
-      </Picker>
-      :null}
+        <Picker
+          key={Math.random()}
+          style={styles.dropdownStyle}
+          prompt={props.prompt}
+          selectedValue={props.selectedValue}
+          onValueChange={props.onValueChange}>
+          <Picker.Item label={props.label} />
+          {props.data.map(e => (
+            <Picker.Item label={e.campName} value={e._id} />
+          ))}
+        </Picker>
+        : null}
       {/* <Dropdown
         style={styles.dropdownStyle}
         data={props.data}
@@ -87,14 +113,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     justifyContent: 'center',
     borderColor: '#D5D5D5',
-    borderRadius:10,
+    borderRadius: 10,
   },
   dropdownStyle: {
     width: '100%',
     height: 50,
     borderWidth: 1,
     borderColor: '#D5D5D5',
-    borderRadius:10,
+    borderRadius: 10,
   },
   placeholderStyle: {
     fontSize: 14,
