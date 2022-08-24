@@ -9,6 +9,7 @@ import Form from './screens/Form';
 import AllLead from './screens/AllLead';
 import BottomMenu from './screens/BottomMenu';
 import ViewDetails from './screens/ViewDetails';
+import FullImageView from './screens/FullImageView';
 // import AllLead from './screens/AllLead'
 // import Form from './screens/Form'
 
@@ -25,6 +26,8 @@ const App = () => {
           page="Dashboard"
         />
         <Stack.Screen name="ViewDetails" component={ViewDetails} />
+        <Stack.Screen name="FullImageView" component={FullImageView} />
+
         {/* <Stack.Screen name="Dashboard" component={Dashboard} /> */}
       </Stack.Navigator>
     </NavigationContainer>

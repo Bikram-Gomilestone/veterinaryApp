@@ -40,6 +40,7 @@ const Dashboard = props => {
   const [netAvailable, setNetAvailable] = useState(false);
   const [status, setStatus] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [lastUpdated,setLastUpdated] = useState(new Date().toString().split(' GMT')[0]);
 
   useEffect(() => {
     // setInterval(() => {
@@ -329,6 +330,7 @@ const Dashboard = props => {
         let totalLeadsCount = response.data.data.farmers.length;
         setTotalLeads(totalLeadsCount);
         setName(result);
+        setLastUpdated(new Date().toString().split(' GMT')[0])
 
         // result.forEach(element => {
         //   console.log(element,"========")
@@ -351,7 +353,7 @@ const Dashboard = props => {
         <View style={{ marginHorizontal: 10 }}>
           <Text style={styles.welcomeText}>{`Welcome, ${username} !`}</Text>
           <Text style={styles.lastUpdatedText}>
-            Last updated: 5 Aug, 1:12PM
+            {`Last updated: ${lastUpdated}`}
           </Text>
         </View>
         <View style={styles.dashboardCard}>
@@ -470,7 +472,7 @@ const styles = StyleSheet.create({
   },
   lastUpdatedText: {
     fontSize: 13,
-    color: '#989898',
+    color: '#000000',
   },
   dashboardCard: {
     flexDirection: 'row',

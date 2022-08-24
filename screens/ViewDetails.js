@@ -9,7 +9,7 @@ const ViewDetails = (props) => {
   // console.log("view details", props.data.images);
   return (
     <View style={{ backgroundColor: '#ffffff', flex: 1 }}>
-      <Header addBtn={false} hide={true} />
+      <Header addBtn={false} hide={true} goBack={() => props.route.params.navigation.pop()}/>
       <ScrollView style={{ marginHorizontal: 10, }} showsVerticalScrollIndicator={false}>
         <Text style={styles.mainHeading}>Farmer Details</Text>
         <View style={{ flexDirection: 'row', }}>
@@ -57,10 +57,12 @@ const ViewDetails = (props) => {
                 {item.images.split('[')[1].split(']')[0].split(',').map((e) => {
                   if (e !== null && e !== undefined && e !== '') {
                     return (
-                      <Image
-                        source={{ uri: `${e}` }}
-                        style={{ width: 100, height: 100, marginBottom: 13, marginRight: 13, borderRadius: 10, }}
-                      />
+                      <TouchableOpacity onPress={() => props.route.params.navigation.navigate('FullImageView', { url: e })}>
+                        <Image
+                          source={{ uri: `${e}` }}
+                          style={{ width: 100, height: 100, marginBottom: 13, marginRight: 13, borderRadius: 10, }}
+                        />
+                      </TouchableOpacity>
                     )
                   }
                 })}
