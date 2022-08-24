@@ -68,7 +68,7 @@ const ViewDetails = (props) => {
             </View>
           )
         })}
-        <TouchableOpacity style={styles.addLeadBtn} onPress={() => navigation.navigate('Dashboard')}>
+        <TouchableOpacity style={styles.addLeadBtn} onPress={() => props.route.params.navigation.navigate('Dashboard')}>
           <Text style={styles.btnText}>
             <Icon name="home" size={14} color="#FFFFFF" style={{ marginRight: 10 }} /> Go To Dashboard
           </Text>

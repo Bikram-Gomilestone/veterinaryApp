@@ -173,7 +173,7 @@ const AllleadCard = (props) => {
                   null
                 }
                 <TouchableOpacity
-                  onPress={() => props.navigation.navigate('ViewDetails', { data: item.item })}
+                  onPress={() => props.navigation.navigate('ViewDetails', { data: item.item, navigation: props.navigation })}
                   // onPress={() => alert(JSON.stringify(item.item))}
                   style={{ backgroundColor: '#058cb2', display: 'flex', flexDirection: 'row', width: 100, alignItems: 'center', justifyContent: 'space-between', height: 25, marginTop: 10, paddingHorizontal: 10, borderRadius: 5, }}
                 >
