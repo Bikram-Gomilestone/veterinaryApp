@@ -21,7 +21,7 @@ const App = () => {
         <Stack.Screen
           name="Dashboard"
           component={BottomMenu}
-          page="Dashboard"
+          //page="Dashboard"
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -58,8 +58,11 @@ const Form = props => {
   const [reRender, setReRender] = useState(false);
 
   const [selectedCampName, setSelectedCampName] = useState(null);
+  const [selectedCampId, setSelectedCampId] = useState(null);
   const [selectCattleType, setSelectCattleType] = useState(null);
+  const [selectCattleTypeId, setSelectCattleTypeId] = useState(null);
   const [selectCattleBreed, setSelectCattleBreed] = useState(null);
+  const [selectCattleBreedId, setSelectCattleBreedId] = useState(null);
 
   const [isUploaded, setIsUploaded] = useState(false);
 
@@ -100,7 +103,7 @@ const Form = props => {
       console.log('called'),
     );
     return () => {
-      // unsubscribe event
+      // unsubscribe event1
       EventRegister.removeEventListener(listener);
     };
   }, []);
@@ -116,14 +119,17 @@ const Form = props => {
       checkInternetAvailability();
       AsyncStorage.getItem('CattleBreed').then(result => {
         let breedChoice = JSON.parse(result);
+        // console.log("CattleBreed: " + JSON.stringify(breedChoice));
         setLocalBreedChoice(breedChoice);
       });
       AsyncStorage.getItem('cattleType').then(result => {
         let cattleTypeChoice = JSON.parse(result);
+        // console.log("cattleType"+JSON.stringify(cattleTypeChoice));
         setLocalCattleChoice(cattleTypeChoice);
       });
       AsyncStorage.getItem('camps').then(result => {
         let campChoice = JSON.parse(result);
+        // console.log("camps"+JSON.stringify(campChoice));
         setLocalCampChoice(campChoice);
       });
       // getPendingImageData();
@@ -148,7 +154,7 @@ const Form = props => {
     axios
       .get('https://www.google.com/')
       .then(function (response) {
-        console.log('response');
+        
         // handle success
         setStatus(true);
         setNetAvailable(true);
@@ -177,7 +183,8 @@ const Form = props => {
       .then(function (response) {
         let result = response.data.data.categoriestype;
         result.forEach(element => {
-          cattleBreed.push(element.typeName);
+          //console.log("element:Breed " + JSON.stringify(element));
+          cattleBreed.push(element);
         });
         setCattleBreed(cattleBreed);
       })
@@ -192,9 +199,10 @@ const Form = props => {
 
       .then(function (response) {
         let result = response.data.data.categories;
-        // console.log(JSON.stringify(result))
+         
         result.forEach(element => {
-          cattleType.push(element.categoryName);
+          //console.log("element:type " + JSON.stringify(element));
+          cattleType.push(element);
         });
         setCattleType(cattleType);
       })
@@ -210,7 +218,8 @@ const Form = props => {
         let result = response.data.data.camps;
         // console.log(JSON.stringify(result));
         result.forEach(element => {
-          campName.push(element.campName);
+          //console.log("element:Campname " + JSON.stringify(element));
+          campName.push(element);
         });
         setCampName(campName);
       })
@@ -219,12 +228,25 @@ const Form = props => {
       });
   };
 
+  const getData = async () => {
+    await axios
+      .get('http://206.189.129.191/backend/api/v1/getAllData')
+      .then(function (response) {
+         console.log(JSON.stringify(response.data.data.farmers),"ffadfadf")
+      })
+      .catch(function (error) {
+        console.log('Error ===> ', error);
+      });
+  };
+
   const getImageURL = async (payload, uid, farmerinfo) => {
+   
     let apiRequest = await axios.post(
       'http://206.189.129.191/backend/api/v1/uploadImage',
       payload,
     );
     let tmp = `http://206.189.129.191/${apiRequest.data.url}`;
+    console.log(tmp);
     return {url: tmp, payload, uid, farmerinfo};
   };
 
@@ -288,7 +310,7 @@ const Form = props => {
       imageData.forEach(element => {
         farmerinfo.forEach((item, key) => {
           if (element.formuid === item.formuid) {
-            // console.log(element, 'element');
+             //console.log(element, 'element');
             // console.log(item, 'item');
             element.images.forEach(i => {
               // console.log(i.base64,"IIIIIII")
@@ -311,7 +333,7 @@ const Form = props => {
       });
       Promise.all(promiseArray)
         .then(async res => {
-          // console.log('all done ........',res);
+           //console.log('all done =====>>>',JSON.stringify(res));
           let urls = [];
           let payload;
           let uid;
@@ -351,18 +373,18 @@ const Form = props => {
         let pendingForm = {
           farmerName: x.farmerName,
           farmerContact: x.farmerContact,
-          cattleType: x.cattleType,
-          cattleBreed: x.cattleBreed,
-          campName: x.campName,
+          cattleTypeId: x.cattleTypeId,
+          cattleBreedId: x.cattleBreedId,
+          campId: x.campId,
           imagesUrl: JSON.stringify(x.imageUrl).replace(/[" "]/g, ''),
         };
         payload.push(pendingForm);
       });
-      console.log('Ready to upload ....', payload);
+      console.log('Ready to upload ====>', payload);
       setIsUploading(true);
       await axios
         .post(
-          'http://206.189.129.191/backend/api/v1/storefarmerdetails',
+          'http://206.189.129.191/backend/api/v1/storeleaddetails',
           payload,
         )
         .then(res => {
@@ -525,8 +547,11 @@ const Form = props => {
     setName(null);
     setMobileNumber(null);
     setSelectedCampName(null);
+    setSelectedCampId(null);
     setSelectCattleType(null);
+    setSelectCattleTypeId(null);
     setSelectCattleBreed(null);
+    setSelectCattleBreedId(null);
     setShowOfflineImg([]);
     setOfflineImages([]);
     setFormuid(Math.random());
@@ -542,15 +567,15 @@ const Form = props => {
       alert('Please enter a mobile Number');
       return;
     }
-    if (selectCattleType === null) {
+    if (selectCattleTypeId === null) {
       alert('Please enter a cattle Type');
       return;
     }
-    if (selectCattleBreed === null) {
+    if (selectCattleBreedId === null) {
       alert('Please enter a Cattle Breed');
       return;
     }
-    if (selectedCampName === null) {
+    if (selectedCampId === null) {
       alert('Please enter a Camp Name');
       return;
     }
@@ -565,19 +590,19 @@ const Form = props => {
         return;
       }
     }
-
-    //console.log(farmerData, 'data before');
+   
+    console.log(FarmerInfoData, 'data before');
 
     FarmerInfoData.push({
       farmerName: name,
       farmerContact: mobileNumber,
-      cattleType: selectCattleType,
-      cattleBreed: selectCattleBreed,
-      campName: selectedCampName,
+      cattleTypeId: selectCattleTypeId,
+      cattleBreedId: selectCattleBreedId,
+      campId: selectedCampId,
       formuid,
     });
 
-    // console.log(farmerData, 'data after');
+    console.log(FarmerInfoData, 'data after');
 
     if (!network) {
       SaveOfflineData(FarmerInfoData, offlineImages);
@@ -586,9 +611,9 @@ const Form = props => {
         {
           farmerName: name,
           farmerContact: mobileNumber,
-          cattleType: selectCattleType,
-          cattleBreed: selectCattleBreed,
-          campName: selectedCampName,
+          cattleTypeId: selectCattleTypeId,
+          cattleBreedId: selectCattleBreedId,
+          campId: selectedCampId,
           imagesUrl: JSON.stringify(uploadImageUrl).replace(/[" "]/g, ''),
         },
       ];
@@ -596,15 +621,19 @@ const Form = props => {
 
       axios
         .post(
-          'http://206.189.129.191/backend/api/v1/storefarmerdetails',
+          'http://206.189.129.191/backend/api/v1/storeleaddetails',
           agentDetails,
         )
         .then(function (response) {
+          getData();
           alert('Form Uploaded successfully');
           setName(null);
           setMobileNumber(null);
+          setSelectedCampId(null);
           setSelectedCampName(null);
+          setSelectCattleTypeId(null);
           setSelectCattleType(null);
+          setSelectCattleBreedId(null);
           setSelectCattleBreed(null);
           setUploadImageUrl([]);
           setFormuid(Math.random());
@@ -614,7 +643,8 @@ const Form = props => {
         .catch(function (error) {
           console.log(error);
         });
-    }
+      }
+    
   };
 
   return (
@@ -659,16 +689,23 @@ const Form = props => {
               label={'Cattle type'}
               buttonTextStyle={styles.placeholderStyle}
               data={cattleType}
-              selectedValue={selectCattleType}
-              onValueChange={(e, i) => setSelectCattleType(e)}
+              selectedValue={selectCattleBreed}
+              onValueChange={(e, i) => {
+                setSelectCattleBreed(e);
+                setSelectCattleBreedId(e._id);
+              
+              }}
             />
           ) : (
             <FormDropDown
               label={'Cattle type'}
               buttonTextStyle={styles.placeholderStyle}
               data={localCattleChoice}
-              selectedValue={selectCattleType}
-              onValueChange={(e, i) => setSelectCattleType(e)}
+              selectedValue={selectCattleBreed}
+              onValueChange={(e, i) => {
+                setSelectCattleBreed(e);
+                setSelectCattleBreedId(e._id);
+              }}
             />
           )}
           {netAvailable ? (
@@ -676,16 +713,22 @@ const Form = props => {
               data={cattleBreed}
               buttonTextStyle={styles.placeholderStyle}
               label={'Cattle breed'}
-              selectedValue={selectCattleBreed}
-              onValueChange={(e, i) => setSelectCattleBreed(e)}
+              selectedValue={selectCattleType}
+              onValueChange={(e, i) => {
+                setSelectCattleType(e);
+                setSelectCattleTypeId(e._id);
+              }}
             />
           ) : (
             <FormDropDown
               data={localBreedChoice}
               buttonTextStyle={styles.placeholderStyle}
               label={'Cattle breed'}
-              selectedValue={selectCattleBreed}
-              onValueChange={(e, i) => setSelectCattleBreed(e)}
+              selectedValue={selectCattleType}
+              onValueChange={(e, i) => {
+                setSelectCattleType(e);
+                setSelectCattleTypeId(e._id);
+              }}
             />
           )}
           {netAvailable ? (
@@ -700,6 +743,7 @@ const Form = props => {
               selectedValue={selectedCampName}
               onValueChange={(e, i) => {
                 setSelectedCampName(e);
+                setSelectedCampId(e._id);
               }}
             />
           ) : (
@@ -714,6 +758,7 @@ const Form = props => {
               selectedValue={selectedCampName}
               onValueChange={(e, i) => {
                 setSelectedCampName(e);
+                setSelectedCampId(e._id);
               }}
             />
           )}
@@ -795,6 +840,7 @@ const Form = props => {
                         </TouchableOpacity>
 
                         <Image
+                          key={i}
                           source={{uri: e}}
                           //source={{uri: 'http://206.189.129.191/images/rn_image_picker_lib_temp_9ea27a20-c7b7-46aa-b7db-ed7cf4c382d9.jpg.jpeg'}}
                           style={{
@@ -852,6 +898,7 @@ const Form = props => {
                         </TouchableOpacity>
 
                         <Image
+                          key={i}
                           source={{uri: `data:image/jpeg;base64,${e.base64}`}}
                           style={{width: '100%', height: '100%'}}
                         />

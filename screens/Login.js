@@ -59,7 +59,7 @@ const Login = props => {
       .then(function (response) {
         let result = response.data.data.categoriestype;
         result.forEach(element => {
-          cattleBreed.push(element.typeName);
+          cattleBreed.push(element);
         });
         AsyncStorage.setItem('CattleBreed', JSON.stringify(cattleBreed));
       })
@@ -76,7 +76,7 @@ const Login = props => {
         let result = response.data.data.categories;
          console.log(JSON.stringify(result))
         result.forEach(element => {
-          cattleType.push(element.categoryName);
+          cattleType.push(element);
         });
         AsyncStorage.setItem('cattleType', JSON.stringify(cattleType));
       })
@@ -92,7 +92,7 @@ const Login = props => {
         let result = response.data.data.camps;
          console.log(JSON.stringify(result));
         result.forEach(element => {
-          campName.push(element.campName);
+          campName.push(element);
         });
         AsyncStorage.setItem('camps', JSON.stringify(campName));
       })

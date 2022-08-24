@@ -42,10 +42,6 @@ const Dashboard = props => {
   const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
-    setInterval(() => {
-      getData();
-      getCampName();
-    }, 100);
     getData();
     getCampName();
     AsyncStorage.getItem('username')
@@ -64,21 +60,6 @@ const Dashboard = props => {
     if (network) {
       // console.log('network back');
       checkInternetAvailability();
-      // } else {
-      //   checkInternetAvailability();
-      //   AsyncStorage.getItem('CattleBreed').then(result => {
-      //     let breedChoice = JSON.parse(result);
-      //     setLocalBreedChoice(breedChoice);
-      //   });
-      //   AsyncStorage.getItem('cattleType').then(result => {
-      //     let cattleTypeChoice = JSON.parse(result);
-      //     setLocalCattleChoice(cattleTypeChoice);
-      //   });
-      //   AsyncStorage.getItem('camps').then(result => {
-      //     let campChoice = JSON.parse(result);
-      //     setLocalCampChoice(campChoice);
-      //   });
-      // getPendingImageData();
     }
   }, [network]);
 
@@ -94,7 +75,7 @@ const Dashboard = props => {
     axios
       .get('https://www.google.com/')
       .then(function (response) {
-        console.log('response', response);
+        //console.log('response', response);
         // handle success
         setStatus(true);
         setNetAvailable(true);
@@ -116,11 +97,13 @@ const Dashboard = props => {
   };
 
   const getImageURL = async (payload, uid, farmerinfo) => {
+   
     let apiRequest = await axios.post(
       'http://206.189.129.191/backend/api/v1/uploadImage',
       payload,
     );
     let tmp = `http://206.189.129.191/${apiRequest.data.url}`;
+    console.log(tmp);
     return {url: tmp, payload, uid, farmerinfo};
   };
 
@@ -184,7 +167,7 @@ const Dashboard = props => {
       imageData.forEach(element => {
         farmerinfo.forEach((item, key) => {
           if (element.formuid === item.formuid) {
-            // console.log(element, 'element');
+             //console.log(element, 'element');
             // console.log(item, 'item');
             element.images.forEach(i => {
               // console.log(i.base64,"IIIIIII")
@@ -207,7 +190,7 @@ const Dashboard = props => {
       });
       Promise.all(promiseArray)
         .then(async res => {
-          // console.log('all done ........',res);
+           //console.log('all done =====>>>',JSON.stringify(res));
           let urls = [];
           let payload;
           let uid;
@@ -247,18 +230,18 @@ const Dashboard = props => {
         let pendingForm = {
           farmerName: x.farmerName,
           farmerContact: x.farmerContact,
-          cattleType: x.cattleType,
-          cattleBreed: x.cattleBreed,
-          campName: x.campName,
+          cattleTypeId: x.cattleTypeId,
+          cattleBreedId: x.cattleBreedId,
+          campId: x.campId,
           imagesUrl: JSON.stringify(x.imageUrl).replace(/[" "]/g, ''),
         };
         payload.push(pendingForm);
       });
-      console.log('Ready to upload ....', payload);
+      console.log('Ready to upload ====>', payload);
       setIsUploading(true);
       await axios
         .post(
-          'http://206.189.129.191/backend/api/v1/storefarmerdetails',
+          'http://206.189.129.191/backend/api/v1/storeleaddetails',
           payload,
         )
         .then(res => {
@@ -267,7 +250,7 @@ const Dashboard = props => {
             if (payload.length > 0) {
               console.log(payload, 'after');
               AsyncStorage.removeItem('FarmerData', () => {
-                EventRegister.emit('FarmerInfoData', 'true');
+                getData();
               });
               AsyncStorage.removeItem('pendingImage', () => {
                 alert('Pending Data Send');
@@ -286,8 +269,8 @@ const Dashboard = props => {
     await axios
       .get('http://206.189.129.191/backend/api/v1/camps')
       .then(function (response) {
-        let result = response.data.data.camps;
-        //console.log(JSON.stringify(result.length));
+         let result = response.data.data.camps;
+        //console.log("======>>>",JSON.stringify(result.length));
         setCampCount(result.length);
         // result.forEach(element => {
         //   campName.push(element.campName);
@@ -324,7 +307,7 @@ const Dashboard = props => {
     await axios
       .get('http://206.189.129.191/backend/api/v1/getAllData')
       .then(function (response) {
-        // console.log(JSON.stringify(response.data.data.farmers),"ffadfadf")
+         console.log(JSON.stringify(response.data.data.farmers),"ffadfadf")
         let result =
           response.data.data.farmers[response.data.data.farmers.length - 1]
             .farmerName;
@@ -341,6 +324,7 @@ const Dashboard = props => {
         console.log('Error ===> ', error);
       });
   };
+
   return (
     <View style={{backgroundColor: '#ffffff', flex: 1}}>
       <Header
