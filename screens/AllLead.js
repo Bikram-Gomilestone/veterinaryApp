@@ -144,7 +144,7 @@ const AllLead = (props) => {
     let finalData = [];
     if (markas !== undefined && markas !== 'Absent') {
       let attData = item.map((e) => {
-        if (e.isChecked === true) {
+        if (e.isChecked === true && e.isPresent === false) {
           return {
             "farmerId": `${e.farmer._id}`,
             "campId": `${e.camp._id}`
