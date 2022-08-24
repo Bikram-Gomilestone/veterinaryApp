@@ -154,7 +154,6 @@ const Form = props => {
     axios
       .get('https://www.google.com/')
       .then(function (response) {
-        
         // handle success
         setStatus(true);
         setNetAvailable(true);
@@ -199,7 +198,7 @@ const Form = props => {
 
       .then(function (response) {
         let result = response.data.data.categories;
-         
+
         result.forEach(element => {
           //console.log("element:type " + JSON.stringify(element));
           cattleType.push(element);
@@ -228,19 +227,7 @@ const Form = props => {
       });
   };
 
-  const getData = async () => {
-    await axios
-      .get('http://206.189.129.191/backend/api/v1/getAllData')
-      .then(function (response) {
-         console.log(JSON.stringify(response.data.data.farmers),"ffadfadf")
-      })
-      .catch(function (error) {
-        console.log('Error ===> ', error);
-      });
-  };
-
   const getImageURL = async (payload, uid, farmerinfo) => {
-   
     let apiRequest = await axios.post(
       'http://206.189.129.191/backend/api/v1/uploadImage',
       payload,
@@ -310,7 +297,7 @@ const Form = props => {
       imageData.forEach(element => {
         farmerinfo.forEach((item, key) => {
           if (element.formuid === item.formuid) {
-             //console.log(element, 'element');
+            //console.log(element, 'element');
             // console.log(item, 'item');
             element.images.forEach(i => {
               // console.log(i.base64,"IIIIIII")
@@ -333,7 +320,7 @@ const Form = props => {
       });
       Promise.all(promiseArray)
         .then(async res => {
-           //console.log('all done =====>>>',JSON.stringify(res));
+          //console.log('all done =====>>>',JSON.stringify(res));
           let urls = [];
           let payload;
           let uid;
@@ -383,10 +370,7 @@ const Form = props => {
       console.log('Ready to upload ====>', payload);
       setIsUploading(true);
       await axios
-        .post(
-          'http://206.189.129.191/backend/api/v1/storeleaddetails',
-          payload,
-        )
+        .post('http://206.189.129.191/backend/api/v1/storeleaddetails', payload)
         .then(res => {
           if (res !== null) {
             // console.log("response",res);
@@ -590,7 +574,7 @@ const Form = props => {
         return;
       }
     }
-   
+
     console.log(FarmerInfoData, 'data before');
 
     FarmerInfoData.push({
@@ -625,7 +609,7 @@ const Form = props => {
           agentDetails,
         )
         .then(function (response) {
-          getData();
+          EventRegister.emit('getData', '');
           alert('Form Uploaded successfully');
           setName(null);
           setMobileNumber(null);
@@ -643,8 +627,7 @@ const Form = props => {
         .catch(function (error) {
           console.log(error);
         });
-      }
-    
+    }
   };
 
   return (
@@ -693,7 +676,6 @@ const Form = props => {
               onValueChange={(e, i) => {
                 setSelectCattleBreed(e);
                 setSelectCattleBreedId(e._id);
-              
               }}
             />
           ) : (

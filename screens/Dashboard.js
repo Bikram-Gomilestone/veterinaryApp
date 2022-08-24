@@ -44,6 +44,7 @@ const Dashboard = props => {
   useEffect(() => {
     getData();
     getCampName();
+    let listener = EventRegister.addEventListener('getData', () => getData());
     AsyncStorage.getItem('username')
       .then(e => {
         setUsername(e);
@@ -51,6 +52,10 @@ const Dashboard = props => {
       .catch(e => {
         alert(e);
       });
+    return () => {
+      // unsubscribe event1
+      EventRegister.removeEventListener(listener);
+    };
   }, []);
 
   useEffect(() => {
@@ -97,7 +102,6 @@ const Dashboard = props => {
   };
 
   const getImageURL = async (payload, uid, farmerinfo) => {
-   
     let apiRequest = await axios.post(
       'http://206.189.129.191/backend/api/v1/uploadImage',
       payload,
@@ -167,7 +171,7 @@ const Dashboard = props => {
       imageData.forEach(element => {
         farmerinfo.forEach((item, key) => {
           if (element.formuid === item.formuid) {
-             //console.log(element, 'element');
+            //console.log(element, 'element');
             // console.log(item, 'item');
             element.images.forEach(i => {
               // console.log(i.base64,"IIIIIII")
@@ -190,7 +194,7 @@ const Dashboard = props => {
       });
       Promise.all(promiseArray)
         .then(async res => {
-           //console.log('all done =====>>>',JSON.stringify(res));
+          //console.log('all done =====>>>',JSON.stringify(res));
           let urls = [];
           let payload;
           let uid;
@@ -240,10 +244,7 @@ const Dashboard = props => {
       console.log('Ready to upload ====>', payload);
       setIsUploading(true);
       await axios
-        .post(
-          'http://206.189.129.191/backend/api/v1/storeleaddetails',
-          payload,
-        )
+        .post('http://206.189.129.191/backend/api/v1/storeleaddetails', payload)
         .then(res => {
           if (res !== null) {
             // console.log("response",res);
@@ -269,7 +270,7 @@ const Dashboard = props => {
     await axios
       .get('http://206.189.129.191/backend/api/v1/camps')
       .then(function (response) {
-         let result = response.data.data.camps;
+        let result = response.data.data.camps;
         //console.log("======>>>",JSON.stringify(result.length));
         setCampCount(result.length);
         // result.forEach(element => {
@@ -307,10 +308,11 @@ const Dashboard = props => {
     await axios
       .get('http://206.189.129.191/backend/api/v1/getAllData')
       .then(function (response) {
-         console.log(JSON.stringify(response.data.data.farmers),"ffadfadf")
-        let result =
-          response.data.data.farmers[response.data.data.farmers.length - 1]
-            .farmerName;
+        console.log(
+          JSON.stringify(response.data.data.farmers[0].farmer.farmerName),
+          'ffadfadf',
+        );
+        let result = response.data.data.farmers[0].farmer.farmerName;
         let totalLeadsCount = response.data.data.farmers.length;
         setTotalLeads(totalLeadsCount);
         setName(result);
@@ -330,7 +332,7 @@ const Dashboard = props => {
       <Header
         addBtn={true}
         onPress={() => {
-          props.navigation.navigate('Form');
+          props.navigation.navigate('Form', {callApi: getData()});
         }}
       />
       <ScrollView showsVerticalScrollIndicator={false} style={{paddingTop: 20}}>
